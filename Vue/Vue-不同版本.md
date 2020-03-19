@@ -31,7 +31,7 @@
 
 这个时候会发现页面上显示的内容不见了，同时在控制台中发现如下图所示的报错信息
 
-![报错信息](/Users/dengpan0513/Desktop/github/front-end-notes/Vue/imgs/vue-version-error.jpg)
+![报错信息](./imgs/vue-version-error.jpg)
 
 以上报错信息表示当前正在使用的是没有模板编译器的仅包含运行时的 Vue 版本，解决办法要不使用 `render` 函数，要不使用包含编译器的 Vue 版本。那下面将会对 Vue 的两个版本进行深入理解
 
@@ -47,13 +47,13 @@
 
 ```html
 <script>
-	new Vue({
-    el: '#app',
-    template: '<div>{{ message }}</div>',
-    data: {
-      message: 'hello Vue.js'
-    }
-  })
+new Vue({
+  el: '#app',
+  template: '<div>{{ message }}</div>',
+  data: {
+    message: 'hello Vue.js'
+  }
+})
 </script>
 ```
 
