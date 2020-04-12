@@ -130,7 +130,7 @@ new Vue({
   ```javascript
   // 需要编译器
   new Vue({
-  	el: '#app',
+    el: '#app',
     template: '<div>{{ message }}</div>',
     data: {
       message: 'hello Vue'
