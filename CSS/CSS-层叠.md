@@ -93,7 +93,7 @@ ul > li[class="active"] > .test /* 0,0,2,2 */
 ul > li:not(.active) /* 0,0,1,2 */
 ```
 
-### \!important
+### 重要性(!important)
 
 当在一个样式表中声明 `!important` 规则时，此声明将会覆盖掉任何其他声明。比如，在 index.html 中有如下内容：
 
