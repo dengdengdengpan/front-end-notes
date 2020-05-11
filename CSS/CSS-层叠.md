@@ -102,7 +102,7 @@ ul > li:not(.active) /* 0,0,1,2 */
 <html>
   <head>
     <link rel="stylesheet" href="./a.css">
-		<link rel="stylesheet" href="./b.css">
+    <link rel="stylesheet" href="./b.css">
   </head>
   <body>
     <p id="test" style="color: red;">p 元素的最终颜色为蓝色</p>
@@ -140,7 +140,7 @@ p#test {
 
 <div style="color: red; padding: 10px;">
   <p>
-		<span>这里的颜色是红色</span>
+    <span>这里的颜色是红色</span>
   </p>
 </div>
 ```
@@ -155,7 +155,7 @@ p#test {
 </style>
 <div style="color: red;">
   <p>
-		<span>根据通配选择器，这里的颜色是蓝色</span>
+    <span>根据通配选择器，这里的颜色是蓝色</span>
   </p>
 </div>
 ```
