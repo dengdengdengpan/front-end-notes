@@ -12,7 +12,7 @@
 
   ```vue
   <template>
-    <div v-bind:class="{ active: isActive }"></div>
+     <div v-bind:class="{ active: isActive }"></div>
   </template>
   
   <script>
@@ -61,7 +61,7 @@
 
   ```vue
   <template>
-  	<div class="test" :class="classObject"></div>
+    <div class="test" :class="classObject"></div>
   </template>
   
   <script>
@@ -84,8 +84,8 @@
 
   ```vue
   <template>
-  	<button
-    	class="w-button"
+    <button
+      class="w-button"
       :class="classes"
     >  
     </button>
@@ -118,7 +118,7 @@
 
   ```vue
   <template>
-  	<div class="test" :class="[ 'active', 'is-disabled' ]"></div>
+    <div class="test" :class="[ 'active', 'is-disabled' ]"></div>
   </template>
   ```
 
@@ -132,7 +132,7 @@
 
   ```vue
   <template>
-  	<button :class="[ type && `w-button-${type}`, isActive ? 'active' : '' ]"></button>
+    <button :class="[ type && `w-button-${type}`, isActive ? 'active' : '' ]"></button>
   </template>
   ```
 
@@ -142,7 +142,7 @@
 
   ```vue
   <template>
-  	<button :class="[{ 'is-loading': loading }]"></button>
+    <button :class="[{ 'is-loading': loading }]"></button>
   </template>
   ```
 
@@ -152,8 +152,8 @@
 
   ```vue
   <template>
-  	<div class="aaa bbb">
-    	<p>vue bind class</p>
+    <div class="aaa bbb">
+      <p>vue bind class</p>
     </div>
   </template>
   
@@ -174,7 +174,7 @@
 
   ```html
   <div class="aaa bbb active">
-  	<p>vue bind class</p>
+    <p>vue bind class</p>
   </div>
   ```
 
@@ -188,7 +188,7 @@
 
   ```html
   <div class="aaa bbb active">
-  	<p>vue bind class</p>
+    <p>vue bind class</p>
   </div>
   ```
 
