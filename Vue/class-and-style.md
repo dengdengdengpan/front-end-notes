@@ -32,7 +32,7 @@
 
   ```vue
   <temlpate>
-  	<div 
+    <div 
       class="test" 
       :class="{ active: isActive, 'is-disabled': isDisabled }"
     >
