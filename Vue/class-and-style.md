@@ -69,7 +69,7 @@
     data () {
       return {
         classObject: {
-  			  active: true,
+          active: true,
           'is-disabled': true
         }
       }
