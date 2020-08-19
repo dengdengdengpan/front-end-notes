@@ -69,7 +69,7 @@
     data () {
       return {
         classObject: {
-  				active: true,
+          active: true,
           'is-disabled': true
         }
       }
@@ -94,8 +94,8 @@
   <script>
   const prefixClass = 'w-button-'
   export default {
-    props: {
-  		loading: {
+    props: 
+      loading: {
         type: Boolean,
         default: false
       }
@@ -159,7 +159,7 @@
   
   <script>
   export default {
-  	name: 'myComponent'
+    name: 'myComponent'
   }
   </script>
   ```
