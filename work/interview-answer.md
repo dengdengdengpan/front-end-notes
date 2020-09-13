@@ -23,29 +23,74 @@
 
 ### CSS
 
-#### 1.有哪些选择器？以及选择器的优先级怎么确定？
+#### 1.怎样在文档中应用 CSS
 
-#### 2.两种盒模型
+- **外部样式表**：将 CSS 规则写在单独的 `.css` 文件中，并从 HTML 的 `<link`> 元素引入它的情况
 
-#### 3.BFC 是什么
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="UTF-8">
+      <link ref="stylesheet" href="./index.css">	
+    </head>
+  </html>
+  ```
 
-#### 4.什么是 flex 布局，以及常用的属性
+- **内部样式表**：将 CSS 规则写在 HTML 文件 `<head>` 标签下的 `<style`> 标签中
 
-#### 5.什么是 grid 布局，以及常用的属性
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          margin: 0;
+          font-size: 14px;
+        }
+      </style>
+    </head>
+  </html>
+  ```
 
-#### 6.清除浮动
+- **内联样式**：将 CSS 规则写在 HTML 元素的 `style` 属性中，其特点是每个 CSS 规则只影响一个元素
 
-#### 7.居中问题
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="UTF-8">
+    </head>
+    <body>
+      <div style="padding: 10px; color: red; font-weight: bold;"></div>
+    </body>
+  </html>
+  ```
+
+#### 2.有哪些选择器？以及选择器的优先级怎么确定？
+
+#### 3.两种盒模型
+
+#### 4.BFC 是什么
+
+#### 5.什么是 flex 布局，以及常用的属性
+
+#### 6.什么是 grid 布局，以及常用的属性
+
+#### 7.清除浮动
+
+#### 8.居中问题
 
 - 水平居中
 - 垂直居中
 - 水平垂直居中
 
-#### 8.列出 display 属性的全部值
+#### 9.列出 display 属性的全部值
 
-#### 9.定位
+#### 10.定位
 
-#### 10.响应式设计和自适应设计有什么不同
+#### 11.响应式设计和自适应设计有什么不同
 
 
 
