@@ -80,7 +80,7 @@
   ;; // 空余句
   ```
 
-  **语句和表达式的区别在于**：语句是为了进行某种操作，一般情况下不需要返回值；表达式是为了得到返回值，一定会返回一个值。同时表达式也不需要分号结尾，一旦在表达式后面添加分号，则 JavaScript 引擎就将该表达视作语句，但是这样会产生一些没有任何意义的语句
+  **语句和表达式的区别在于**：语句是为了进行某种操作，一般情况下不需要返回一个值；表达式则是为了返回一个值。同时表达式也不需要分号结尾，一旦在表达式后面添加分号，则 JavaScript 引擎就将该表达视作语句，但是这样会产生一些没有任何意义的语句
 
   ```javascript
   // 表达式添加分号，成为无意义的语句
@@ -88,11 +88,11 @@
   'JavaScript';
   ```
 
-  比如 可以通过`if` 流程语句来判断，因为它的控制条件预期是一个值
+  比如 可以通过`if` 流程语句来判断，因为它的控制条件预期是为得到一个逻辑值
 
   ```javascript
   if (a = 1) {}
-  if (var b = 1) {} // var b = 1 时语句，会报错Uncaught SyntaxError: Unexpected token 'var'
+  if (var b = 1) {} // var b = 1 是语句，会报错Uncaught SyntaxError: Unexpected token 'var'
   ```
 
 - **注释**
@@ -110,15 +110,108 @@
 
 - 关键字和保留字
 
-  - 关键字在 JavaScript 中有特殊的用途，比如表示控制语句的开始和结束，或者执行特定的操作。比如常用的关键字有：`import`、`export`、`if`、`else`、`switch`、`catch`、`this`、`new`、`delete`、`var`、`const`、`class`
+  - 关键字在 JavaScript 中有特殊的用途，比如表示控制语句的开始和结束，或者执行特定的操作。比如有：`import`、`export`、`if`、`else`、`switch`、`catch`、`this`、`new`、`delete`、`var`、`const`、`class`
   - 保留字目前在 JavaScript 中还没有特殊用途，但它们是保留给将来做关键字用的。比如有：`package`、`public`、`interface`
   - 保留字和关键字都不能用作标识符
 
 ### 2.变量
 
-变量是用来保存任意**值**的命名占位符，变量和**值**之间是一种引用关系。在 JavaScript 中的变量是松散类型的，表示变量可以用来保存任意类型的数据，并且在使用中也可以改变类型。声明变量的方式有：`var`、`let`、`const`
+- 认识变量
 
-- **`var`**
+  在 JavaScript 中变量是用来保存任意**值**的命名占位符，变量和**值**之间建立了一种引用关系，使用变量，就等于引用了这个值
 
-  xxx
+  ```javascript
+  var fruit = 'apple';
+  ```
+
+  上面代码声明先声明了变量 `fruit`，然后在变量 `fruit` 和字符串 `apple` 之间建立了引用关系。在后续使用中，使用变量 `fruit` 就会得到字符串 `apple`。而关键字 `var` 是变量声明命令，它会通知 JavaScript 引擎将要创建一个变量 `fruit`
+
+  同时，JavaScript 作为动态语言，其变量是**松散类型**的，表示变量可以用来保存任意类型的数据，并且在使用中也可以改变数据类型
+
+  ```javascript
+  var a = 'fish';
+  a = 1;
+  ```
+
+  上面代码中，变量 `a` 先被赋值为一个字符串，后又被赋值为数值
+
+- **声明变量**
+
+  如果直接使用一个未声明的变量，JavaScript 会报错，告诉你该变量未定义，如下代码：
+
+  ```javascript
+  a; // Uncaught ReferenceError: a is not defined
+  ```
+
+  **在 JavaScript 中有三种方式声明变量：`var`、`let`、`const`**
+
+  - `var` 声明一个全局或局部变量，可选是否初始化一个值（未初始化则保存特殊值 `undefined`）
+
+    - 使用方式：`var` 后跟变量名；声明多个变量，在一条语句中使用逗号分隔。如果选择初始化值则等于进行了变量的声明和赋值这两个操作
+
+      ```javascript
+      var a; // 未初始化，变量 a 的值为 undefined
+      
+      var b = 'test'; // 有初始化，b 被定义为一个保存字符串值 test 的变量
+      // 上面语句等同于
+      var b; // 声明变量
+      b = 'test'; // 变量赋值
+      
+      var c = 2, d = 'test', e; //声明多个变量
+      var f = 10,
+          g,
+          h = 'test'; // 声明多个变量，缩进和换行不是必需的，只是有利于阅读
+      ```
+
+    - **变量名可重复声明**。如果后续只是声明相同的变量名，那么该变量的值不变；如果后续声明相同的变量名并赋值，那么会覆盖掉前面的值
+
+      ```javascript
+      // 只声明相同的变量名不赋值
+      var a = 100;
+      var a;
+      console.log(a); // 100
+      
+      // 声明相同的变量名并赋值，变量 b 的值为改变后的值
+      var b = ‘test’;
+      var b = 20;
+      console.log(b); // 20
+      ```
+
+    - **作用域**
+
+      - 全局作用域：`var` 在**函数外部**声明变量的作用域是全局环境，该变量叫全局变量。同时，全局变量会成为全局对象的属性。比如在浏览器中，全局对象是 `window`，可以用形如 `window.variable` 的语法来设置和访问全局变量
+
+        ```javascript
+        var a = 1; //全局变量
+        if (true) {
+          console.log(a); // 1
+        }
+        function fn() {
+          console.log(a);
+        }
+        window.a = 3; // 浏览器环境下，全局对象是 window
+        console.log(window.a); // 3
+        fn(); // 3
+        ```
+
+      - 局部作用域，`var` 在**函数内部**声明变量是局部变量，该变量的作用域只在当前函数内部，表示该变量只能在当前函数内部访问
+
+        ```javascript
+        function fn() {
+          var a = 1; // 局部变量
+          console.log(a); // 1
+        }
+        fn();
+        console.log(a); // 报错 Uncaught ReferenceError: a is not defined
+        ```
+
+        上面代码中，变量 `a` 定义在 `fn` 函数内部。当调用 `fn` 函数时会创建变量 `a` 并赋值；调用完后变量 `a` 随即被销毁，所以在函数外部访问变量 `a` 时显示它未定义的报错
+
+  - `let` 声明一个拥有块作用域的变量，可选是否初始化一个值（未初始化则保存特殊值 `undefined`）
+
+    - 使用方式：
+
+- **变量类型**
+
+- **变量提升**
 
