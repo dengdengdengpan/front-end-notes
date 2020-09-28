@@ -203,3 +203,8 @@
   - **`space-evenly`**：所有行的 flex item 都在交叉轴上均匀分布，第一行到交叉轴起点的距离、最后一行到交叉轴终点的距离、每行之间的间距都相等
 
     ![ac-space-evenly](./imgs/ac-space-evenly.png)
+
+### 四、flex item 属性
+
+
+
