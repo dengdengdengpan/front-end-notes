@@ -24,15 +24,15 @@
 
 ### 二、Flex 布局模型
 
-采用 Flex 布局的元素，称为 **flex 容器（flex container）**，flex 容器中的所有子元素被称为 **flex 项（flex item）**。flex 容器沿着两个轴来布局：
+采用 Flex 布局的元素，称为 **flex 容器（flex container）**，flex 容器中的所有直接子元素被称为 **flex 项（flex item）**。flex 容器沿着两个轴来布局：
 
 ![flex 模型](./imgs/flex-model.svg)
 
 **主轴**（main axis）是沿着 flex item 放置方向延伸的轴，在页面中默认情况下从左到右的方向；主轴的开始位置称为 main start，结束位置称为 main end，主轴的尺寸由 main size 表示
 
-**交叉轴**（cross axis）是垂直 flex item 放置方向的轴，在页面中默认情况下是从上到下的方向；交叉轴的开始位置称为 cross start，结束位置称为 cross end，交叉轴尺寸由 cross size 表示
+**交叉轴**（cross axis）是垂直于 flex item 放置方向的轴，在页面中默认情况下是从上到下的方向；交叉轴的开始位置称为 cross start，结束位置称为 cross end，交叉轴尺寸由 cross size 表示
 
-而与 Flex 布局相关的 CSS 属性分为两个部分，一部分作用在 flex container，一部分作用在 flex item
+与 Flex 布局相关的 CSS 属性可分为两部分，一部分作用于 flex container，一部分作用于 flex item
 
 ### 三、flex container 属性 
 
@@ -52,11 +52,11 @@
 
     ![fd-row-reverse](./imgs/flex-direction-row-reverse.png)
 
-  - **`column`**：主轴显示为列，方向默认是从上到下
+  - **`column`**：主轴显示为列，方向是从上到下
 
     ![fd-column](./imgs/flex-direction-column.png)
 
-  - **`column-reverse`**：主轴显示为列，但方向和 `column` 属性值是相反的
+  - **`column-reverse`**：主轴显示为列，但方向和 `column` 属性值是相反，即从下到上
 
     ![fd-column-reverse](./imgs/flex-direction-column-reverse.png)
 
@@ -104,7 +104,7 @@
 
   - `normal` 是初始值，在 flex 布局中和 `flex-start` 属性值的效果一样
 
-  - **`flex-start`**：flex item 在主轴方向上左对齐。每行的第一个 flex item 从主轴起点开始，后续的 flex item 紧挨前一个对齐
+  - **`flex-start`**：flex item 在主轴方向上左对齐。每行的第一个 flex item 从主轴起点开始，后续的 flex item 紧跟前一个对齐
 
     ![jc-flex-start](./imgs/jc-flex-start.png)
 
@@ -120,7 +120,7 @@
 
     ![jc-space-between](./imgs/jc-space-between.png)
 
-  - **`space-around`**：flex item 均匀分布在主轴方向上。flex item 之间的间距相等，但是每行第一个 flex item 与主轴起点有间距，每行最后一个 flex item 与主轴终点之间也有间距，它们间距宽度是 flex item 之间间距的一半
+  - **`space-around`**：flex item 均匀分布在主轴方向上。flex item 之间的间距相等，但是每行第一个 flex item 与主轴起点之间有间距，每行最后一个 flex item 与主轴终点之间也有间距，它们的间距宽度都是 flex item 之间间距的一半
 
     ![jc-space-around](./imgs/jc-space-around.png)
 
@@ -136,7 +136,7 @@
 
   - `normal` 是初始值，在 flex 布局中和 `stretch` 属性值的效果一样
 
-  - **`stretch`**： 如果 flex item 未设置高度，则将 flex item 拉伸到 flex container 在交叉轴上的尺寸；如果 flex item 设置了高度，则按照设置的高度值渲染，而非拉伸
+  - **`stretch`**： 如果 flex item 未设置高度（交叉轴方向上 flex item 的大小），则将 flex item 拉伸到 flex container 在交叉轴上的尺寸；如果 flex item 设置了高度，则按照设置的高度值渲染，而非拉伸
 
     - flex item 未设置高度
 
@@ -168,17 +168,21 @@
   align-content: normal | stretch | flex-start | flex-end | center | space-between | space-around | space-evenly
   ```
 
-  - `normal` 是初始值，在 flex 布局中和 `stretch` 属性值的效果一样
+  - `normal` 是初始值，表现为未设置 `align-content` 属性的方式填充，在 flex 布局中和 `stretch` 属性值的效果一样
 
-  - **`stretch`**：如果 flex item 未设置高度，则每一行的 flex item 都等比拉伸；比如，如果共两行 flex item，则每一行拉伸高度是50%。如果 flex item 设置了高度，则按照设置的高度值渲染，而非拉伸
+  - **`stretch`**：每行交叉轴上的空间都会被拉伸以填满交叉轴上的剩余空间，剩余空间平均地分配给每一行。如果 flex item 未设置高度，则剩余空间会分配给 flex item；如果 flex item 设置了高度，则按照 flex item 设置的高度值渲染而不会拉伸。比如，如果共有两行 flex item，则每一行拉伸高度都是50%，在每行中，未设置高度的 flex item 会被拉伸到每行的高度；设置了高度的 flex item 只会按照其高度值渲染
 
-    - flex item 未设置高度
+    - flex item 全部未设置高度，flex item 被拉伸到每行容器的高度值（只有两行，则每行的高度都是总容器的 50%）
 
       ![ac-stretch-1](./imgs/ac-stretch-1.png)
 
-    - flex item 设置了高度
+    - flex item 全部设置了高度，则按照 flex item 设置的高度值渲染
 
       ![ac-stretch-2](./imgs/ac-stretch-2.png)
+    
+    - flex item 每行中一部分设置高度，一部分未设置高度。下图中，编号 1、3、5 未设置高度，它们会被拉伸到每行容器的高度；编号 2、4、6 设置了高度，则它们按照自身的高度值渲染
+
+      ![ac-stretch-3](./imgs/ac-stretch-3.png)
 
   - **`flex-start`**：第一行的 flex item 沿着交叉轴起点对齐，后面行的 flex item 紧接着上一行对齐
 
@@ -199,12 +203,12 @@
   - **`space-around`**：所有行的 flex item 都在交叉轴上均匀分布，每行之间的间距相等，第一行到交叉轴起点距离和最后一行到交叉轴终点的距离都等于每行之间间距的一半
 
     ![ac-space-around](./imgs/ac-space-around.png)
-
+  
   - **`space-evenly`**：所有行的 flex item 都在交叉轴上均匀分布，第一行到交叉轴起点的距离、最后一行到交叉轴终点的距离、每行之间的间距都相等
-
+  
     ![ac-space-evenly](./imgs/ac-space-evenly.png)
 
 ### 四、flex item 属性
 
-
+作用于 flex item 的 CSS 属性共有六个，分别是：`order`、`flex-grow`、`flex-shrink`、`flex-basis`、`flex`、`align-self`
 
