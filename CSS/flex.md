@@ -28,9 +28,9 @@
 
 ![flex 模型](./imgs/flex-model.svg)
 
-**主轴**（main axis）是沿着 flex item 放置方向延伸的轴，在页面中默认情况下从左到右的方向；主轴的开始位置称为 main start，结束位置称为 main end，主轴的尺寸由 main size 表示
+**主轴**（main axis）是沿着 flex item 放置方向延伸的轴，在页面中默认情况下从左到右的方向；主轴的开始位置称为 main start，结束位置称为 main end，主轴的尺寸由 main size 表示。main size 表示单个 flex item 在主轴方向上占据的空间
 
-**交叉轴**（cross axis）是垂直于 flex item 放置方向的轴，在页面中默认情况下是从上到下的方向；交叉轴的开始位置称为 cross start，结束位置称为 cross end，交叉轴尺寸由 cross size 表示
+**交叉轴**（cross axis）是垂直于 flex item 放置方向的轴，在页面中默认情况下是从上到下的方向；交叉轴的开始位置称为 cross start，结束位置称为 cross end。 cross size 表示单个 flex item 在交叉轴方向上占据的空间
 
 与 Flex 布局相关的 CSS 属性可分为两部分，一部分作用于 flex container，一部分作用于 flex item
 
@@ -211,4 +211,59 @@
 ### 四、flex item 属性
 
 作用于 flex item 的 CSS 属性共有六个，分别是：`order`、`flex-grow`、`flex-shrink`、`flex-basis`、`flex`、`align-self`
+
+- **`order`** 定义了 flex item 在容器中布局时的排列顺序，flex item 按照 `order` 属性的值的增序进行排列（值越小，排列越靠前），拥有相同  `order` 属性值的 flex item 按照它们在源代码中出现的顺序进行排列。`order` 属性的初始值为 0，其值的格式是整数，语法如下：
+
+  ```
+  order: <integer>
+  ```
+
+  比如，下图中编号为 3 的 flex item 设置 `order: -1` 后的布局
+
+  ![order](./imgs/order.png)
+
+  注意：`order` 属性值只对元素的视觉顺序产生作用，并不会影响元素的逻辑顺序或 tab 顺序
+
+- **`flex-grow`** 定义了 flex item 在主轴方向上扩展的比例，扩展的来源是剩余空间（flex container 的大小减去 flex item 的大小后的尺寸）。`flex-grow` 的初始值为 0，表示不占用剩余空间来扩展自己的大小，该属性值的格式为 number，负值无效，可以为小数，语法如下：
+
+  ```
+  flex-grow: <number>
+  ```
+
+  如果有 flex item 的 `flex-grow` 属性值大于 0，flex container 的剩余空间就会发生分配，具体规则如下：
+
+  - 剩余空间的总量是 1
+
+  - 只有一个 flex item 设置 `flex-grow` 属性：
+    - 如果 `flex-grow` 属性值 < 1，则扩展的大小是该属性值 * 剩余空间，比如示例一
+    - 如果 `flex-grow` 属性值 >= 1，则独享整个剩余空间，比如示例二
+  - 多个 flex item 设置 `flex-grow` 属性：
+    - 如果各个 `flex-grow` 属性值的总和 < 1，则每个 flex item 的扩展大小是当前元素的 `flex-grow` 属性值 * 剩余空间，比如示例三
+    - 如果各个 `flex-grow` 属性值的总和 >= 1，则所有的剩余空间都会被分配，每个 flex item 的分配比例就是它们 `flex-grow` 的属性值比例。比如，所有 flex item 都设置 `flex-grow: 1` ，则表示所有的 flex item 等分剩余空间；如果flex item 设置的 `flex-grow` 属性值的比例为 2:1:1，则第一个 flex item 会占据 2 / 4 的剩余空间，后两个 flex item 会占据 1 / 4 的剩余空间，比如示例四
+
+  比如当前有一 flex container，容器大小为 500px，它有 4 个 flex item，每个flex item 的 main size 为 100px，那么剩余空间为 100px，有以下设置 `flex-grow` 的情况：
+
+  - 示例一，只有编号为 3 的 flex item设置了 `flex-grow: 0.5` ，那么它的扩展大小是 0.5 * 100，扩展后的主轴尺寸为 150px
+
+    ![flex-grow-1](./imgs/flex-grow-1.png)
+
+  - 示例二，只有编号为 3 的 flex item 设置了 `flex-grow: 1`，那么它将独享整个剩余空间，那么它扩展后的主轴尺寸为 200px
+
+    ![flex-grow-2](./imgs/flex-grow-2.png)
+
+  - 示例三，每个 flex item 的 `flex-grow` 属性值分别设置为：0.1、0.2、0.3、0.1，那么它们的扩展大小分别是：0.1 * 100、0.2 * 100、0.3 * 100，0.1 * 100，扩展后的主轴尺寸为：110px、120px、130px、110px
+
+    ![flex-grow-3](./imgs/flex-grow-3.png)
+
+  - 示例四，每个 flex item 的 `flex-grow` 属性值分别设置为：2、1、3、4，那么它们的扩展大小分别是：2 / 10  * 100、1 / 10 * 100、3 / 10 * 100，4 / 10 * 100，扩展后的主轴尺寸为：120px、110px、130px、140px
+
+    ![flex-grow-4](./imgs/flex-grow-4.png)
+
+- **`flex-shrink`** 
+
+- **`flex-basis`** 
+
+- **`flex`** 
+
+- **`align-self`** 
 
