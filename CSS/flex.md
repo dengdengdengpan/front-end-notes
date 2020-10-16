@@ -212,7 +212,7 @@
 
 作用于 flex item 的 CSS 属性共有六个，分别是：`order`、`flex-grow`、`flex-shrink`、`flex-basis`、`flex`、`align-self`
 
-- **`order`** 定义了 flex item 在容器中布局时的排列顺序，flex item 按照 `order` 属性的值的增序进行排列（值越小，排列越靠前），拥有相同  `order` 属性值的 flex item 按照它们在源代码中出现的顺序进行排列。`order` 属性的初始值为 0，其值的格式是整数，语法如下：
+- **`order`** 定义了 flex item 在容器中布局时的排列顺序，flex item 按照 `order` 属性的值的增序进行排列（按值从小到大排列），拥有相同  `order` 属性值的 flex item 按照它们在源代码中出现的顺序进行排列。`order` 属性的初始值为 0，其值的格式是整数，语法如下：
 
   ```
   order: <integer>
@@ -259,11 +259,63 @@
 
     ![flex-grow-4](./imgs/flex-grow-4.png)
 
-- **`flex-shrink`** 
+- **`flex-shrink`** 定义了 flex container 空间不足时，单个 flex item 的收缩比例。`flex-shrink` 的初始值为 1，表示所有的 flex item 在容器空间不足时都会收缩；如果 `flex-shrink` 设置为 0，则表示不收缩。`flex-shrink` 属性值的格式为 number，负值不被允许，语法如下：
 
-- **`flex-basis`** 
+  ```
+  flex-shrink: <number>
+  ```
 
-- **`flex`** 
+  在一个 flex 布局中，容器空间大小为 300px，共有 4 个 flex item， 它们的 main size 为 100px，并且 flex item 不换行，此时容器的空间会不足，不足的部分是：4 * 100 - 300 = 100px
 
-- **`align-self`** 
+  - 示例一，只有编号为 1 的 flex item 设置了 `flex-shrink: 0.6` ，它的收缩尺寸为：100 * 0.6 = 60px。由于该 flex item 的收缩尺寸 60px < 容器空间不足部分 100px，则还是会有部分 flex item 溢出容器，如下图
+
+    ![flex-shrink-1](./imgs/flex-shrink-1.png)
+
+  - 示例二，只有编号为 1 的 flex item 设置了 `flex-shrink: 1` ，那么它会尽可能的收缩自己，如下图
+
+    ![flex-shrink-2](./imgs/flex-shrink-2.png)
+
+  - 示例三，编号为 1、3 的 flex item分别设置 `flex-shrink` 为：0.5、0.6，它们的收缩尺寸之和为：100 * 0.5 + 100 * 0.6 = 110px。它们的收缩尺寸之和 110px > 容器空间不足部分 100px，则 flex item 都完全在 flex container 中，如下图
+
+    ![flex-shrink-3](./imgs/flex-shrink-3.png)
+
+- **`flex-basis`** 定义了 flex item 在主轴上的初始大小。`flex-basis` 的默认值是 auto，表示有设置 `width` 时 flex item 在主轴上占据的空间就是 `width`，没有设置就占据 flex item 的内容宽度，语法如下：
+
+  ```
+  flex-basis: <'width'> | content
+  ```
+
+  注意，flex item 要是同时设置了 `flex-basis`（除了 auto 外） 和 `width`（或者在 `flex-direction: column` 情况下设置了`height`），`flex-basis` 具有更高的优先级
+
+- **`flex`** 是 `flex-grow`、`flex-shrink`、`flex-basis` 的简写属性，它的默认值为： 0 1 auto，语法如下：
+
+  ```
+  flex: none | [ <'flex-grow'> <'flex-shrink'>? || <'flex-basis'> ]
+  ```
+
+  `flex` 属性的取值有以下情况：
+
+  - **单值语法**，值为以下其中之一：
+    - 关键字：`initial`、`auto`、`none`
+      - `flex: initial` === `flex: 0 1 auto`
+      - `flex: auto` === `flex: 1 1 auto`
+      - `flex:none` === `flex: 0 0 auto`
+    - 一个无单位数，当作 `flex-grow` 的属性值
+    - 一个有效宽度值，当作 `flex-basis` 的属性值
+  - **双值语法**，第一个值必须为无单位数，当作 `flex-grow` 的属性值；第二个值必须为以下之一：
+    - 一个无单位数，当作 `flex-shrink` 的属性值
+    - 一个有效宽度值，当作 `flex-basis` 的属性值
+  - **三值语法**，分别为：无单位数、无单位数、有效宽度值来表示 `flex-grow`、`flex-shrink`、`flex-basis` 
+
+- **`align-self`** 定义来单个 flex item 在交叉轴上的对齐方式，它会覆盖 `align-items` 的属性值。`align-self` 的初始值为 auto，表示设置为容器 `align-items` 的值，语法如下：
+
+  ```
+  align-self: auto | normal | stretch | flex-start | flex-end | center | baseline
+  ```
+
+  比如，容器中 `align-items: center`，而编号为 1 的 flex item 设置 `align-self: flex-end`，效果如下图
+
+  ![as-flex-end](./imgs/as-flex-end.png)
+
+### 四、应用
 
