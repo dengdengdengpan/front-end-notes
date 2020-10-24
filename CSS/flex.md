@@ -319,3 +319,116 @@
 
 ### 四、应用
 
+- 实现两栏布局，比如一个导航栏
+
+  - HTML 代码：
+
+    ```html
+    <header>
+      <div class="logo">
+        <img src="xxx.logo" alt="logo">
+      </div>
+      <nav>
+        <ul class="nav">
+          <li>HTML</li>
+          <li>CSS</li>
+          <li>JavaScript</li>
+          <li>HTTP</li>
+        </ul>
+      </nav>
+    </header>
+    ```
+
+  - CSS 代码：
+
+    ```css
+    /* reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-size: 16px;
+    }
+    li {
+      list-style-type: none;
+    }
+    img {
+      max-width: 100%;
+    }
+    /* header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      padding-left: 20px;
+      padding-right: 20px;
+      background-color: grey;
+    }
+    header .logo {
+      display: flex;
+      align-items: center;
+    }
+    header .logo img {
+      height: 24px;
+      vertical-align: middle;
+    }
+    header nav .nav {
+      display: flex;
+    }
+    header .nav > li {
+      padding: .4em 1em;
+      color: #fff;
+    }
+    header .nav > li:hover {
+      background-color: #aaa;
+      cursor: pointer;
+    }
+    ```
+
+  - 效果如下图：
+
+    ![flex 两栏布局](./imgs/flex-layout-two.png)
+
+- 实现三栏布局，比如常见的边栏、内容、广告的左中右布局
+
+  - HTML 代码：
+
+    ```html
+    <div class="content">
+      <aside>边栏</aside>
+      <main>主要内容</main>
+      <div class="ad">广告</div>
+    </div>
+    ```
+
+  - CSS 代码：
+
+    ```css
+    /* content */
+    .content {
+      display: flex;
+      min-width: 800px;
+      margin-top: 20px;
+      color: #fff;
+    }
+    .content aside {
+      width: 200px;
+      background-color: #777;
+    }
+    .content main {
+      flex-grow: 1;
+      height: 400px;
+      margin-left: 5px;
+      margin-right: 5px;
+      background-color: #666;
+    }
+    .content .ad {
+      width: 80px;
+      background-color: #888;
+    }
+    ```
+
+  - 效果如下图：
+
+    ![flex 三栏布局](./imgs/flex-layout-three.png)
