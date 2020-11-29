@@ -1,37 +1,88 @@
-# 理解 Vue 不同版本
+# 理解 Vue 不同构建版本
 
-### 背景
+从 Vue 文档的安装章节中，可以知道实际上 Vue 的构建版本可以划分为：**完整版**和**运行时版**。在结合例子理解这两个版本的不同之前，有以下术语解释：
 
-在使用 `@vue/cli` 创建项目的过程中，在 `src/main.js` 中作如下修改：
+> 完整版：同时包含编译器和运行时的版本。
+>
+> 编译器：用来将模板字符串编译成为 JavaScript 渲染函数的代码。
+>
+> 运行时：用来创建 Vue 示例、渲染并处理虚拟 DOM 等的代码。基本上就是除去编译器的其它一切。
 
-```javascript
-// main.js
-import Vue from 'vue'
+### 制作 +1 按钮
 
-Vue.config.productionTip = false
+#### 使用完整版
 
-new Vue({
-  // render: h => h(App),
-  data: {
-    message: 'hello Vue'
-  }
-}).$mount('#app')
-```
-
-同时在 `public/index.html` 页面中尝试着使用 Vue 的文本插值来进行数据绑定，新增如下代码：
+代码如下：
 
 ```html
-<!-- index.html -->
 <div id="app">
-  {{ message }}
+  {{ n }}
+  <button @click="addOne">+1</button>
 </div>
+<!-- 引入完整版的 Vue -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      n: 0
+    },
+    methods: {
+      addOne() {
+        this.n += 1
+      }
+    }
+  })
+</script>
 ```
 
-然后使用 `npm run serve` 启动服务，打开页面却发现页面中无内容显示，同时控制台中有如下图所示的报错信息：
+此时，在页面中点击 `+1` 按钮时，初始值 0 会变为 1，实现了 `+1` 按钮的功能。
 
-![报错信息](./imgs/vue-version-error.jpg)
+#### 使用运行时版
 
-以上报错信息表示当前正在使用的是没有模板编译器的只包含运行时的 Vue 版本，解决办法要不使用 `render` 函数，要不使用包含编译器的 Vue 版本。那接下来就解决这个报错信息
+将上面代码中引入完整版 Vue 的链接更换为运行时版，如下代码：
+
+```html
+<!-- 引入运行时版的 Vue -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.runtime.js"></script>
+```
+
+ 但这时页面控制台中会出现如下报错信息：
+
+![运行时版报错](./imgs/vue-runtime-error.jpg)
+
+以上报错信息表示当前正在使用的是没有模板编译器的只包含运行时的 Vue 版本，解决办法：使用 `render` 函数或者使用完整版。那么接下来使用 `render` 函数解决报错：
+
+```html
+<div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.runtime.js"></script>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      n: 0
+    },
+    methods: {
+      addOne() {
+        this.n += 1
+      }
+    },
+    render(h) {
+      return h('div', [this.n, h('button', { on:{ click: this.addOne } }, '+1')])
+    }
+  })
+</script>
+```
+
+在使用
+
+
+
+
+
+
+
+
 
 ### 解决报错
 
