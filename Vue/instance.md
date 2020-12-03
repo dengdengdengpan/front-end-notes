@@ -2,152 +2,147 @@
 
 ### 创建一个 Vue 实例
 
-- 每个 Vue 应用都是通过用 `Vue` 函数创建一个新的 Vue 实例开始，如下
+每个 Vue 应用都是通过用 `Vue` 函数创建一个新的 Vue 实例开始的，代码如下：
 
-  ```javascript
-  const vm = new Vue({
-    // 选项
-  })
-  ```
+```javascript
+const vm = new Vue({
+  // 选项对象
+})
+```
 
-- 一个 Vue 应用由一个通过 `new Vue` 创建的根实例，以及可选的可嵌套的、可复用的组件树组成
+当创建 Vue 实例时，可以传入一个**选项对象**，它包含：**数据**、**DOM**、**生命周期钩子**、**资源**、**组合**、**其它**这几大类，通过这些选项可以创建需要的行为。比如在 DOM 类中，我们常常使用 `el` 将 Vue 实例挂载到页面上：
 
-### 数据和方法
+```javascript
+new Vue({
+  el: '#app'
+})
+```
 
-- 数据
+### 实例的属性和方法
 
-  - 当一个 Vue 实例被创建时，它将 `data` 对象中**在实例被创建时就存在的属性**都加入到 Vue 的**响应式系统**中；当这些属性的值发生改变时，视图将产生’响应‘，即匹配更新为新的值。如下：
+在创建 Vue 实例后，可以将其在控制台打出，会发现 Vue 实例是一个对象：
 
-    ```javascript
-    // 数据对象
-    let user = {
-    	name: 'xxx',
-      age: 20
+![实例](./imgs/property-method.png)
+
+Vue 实例这个对象暴露出来一些有用的属性和方法，它们都前缀 `$`，以便与开发者定义的 property 区分开来。比如：
+
+```javascript
+const data = { n: 0 }
+const vm = new Vue({
+  el: '#app',
+  data: data
+})
+
+// $el 属性：使用的根 DOM 元素
+vm.$el === document.getElementById('app') // true
+
+// $data 属性：Vue 实例的属数据对象
+vm.$data === data // true
+
+// $watch 方法
+vm.$watch('n', (newValue, oldValue) => {
+  // 这个回调将在 `vm.n` 改变后调用
+})
+```
+
+### 认识 data
+
+`data` 是 Vue 实例的数据对象，比如，可以这样使用数据对象：
+
+```javascript
+// 数据对象
+const person = {
+  name: 'xxx',
+  age: 18
+}
+// 将数据对象加入到 Vue 实例中
+const vm = new Vue({
+  data: person
+})
+```
+
+在一个 Vue 实例被创建时，它会将 `data` 对象中所有的 property 加入到 **Vue 的响应式系统**。当这些 property 的值发生改变时，视图将会产生响应：重新渲染并匹配更新为最新的值。比如，如下代码：
+
+```vue
+<template>
+	<p>计数：{{ n }}</p>
+	<button @click="addOne">+1</button>
+</template>
+
+<script>
+export default {
+  data: {
+    n: 0
+  },
+  methods: {
+    addOne() {
+      this.n += 1
     }
-    
-    // 将数据对象加入到一个 Vue 实例中
-    let app = new Vue({
-    	el: '#app',
-      data: user
-    })
-    
-    // Vue 实例属性的值 === 数据对象对应字段的值
-    app.name === user.name // true
-    
-    // 修改实例的属性会影响到原始数据
-    app.name = 'yyy'
-    user.name // yyy
-    
-    // 修改原始数据也会影响到实例的属性
-    user.name = 'ccc'
-    app.name // ccc
-    ```
-    
-  - 例子1，有如下代码，其中`HTML` 如下
+  }
+}
+</script>
+```
 
-    ```html
-    <div id="app">
-      <span class="span-a">{{ obj.a }}</span>
-      <span class="span-b">{{ obj.b }}</span>
-    </div>
-    ```
+刚进入页面时，产生的视图如下：
 
-    `JavaScript` 如下
+![实例视图-1](./imgs/instance-example-1.png)
 
-    ```javascript
-    let app = new Vue({
-      el: '#app',
-      data: {
-        obj: {
-          a: 'a1'
-        }
-      }
-    })
-    app.obj.a = 'a2'
-    ```
+由于 +1 按钮的作用是将 `data` 中的 `n` property 自增 1，所以当首次点击 +1 按钮时，`n` 的值会变为 2，视图也会随之匹配更新：
 
-    最终 span-a 和 span-b 中分别展示什么？由于属性 `a` 是在该实例被创建时 `data` 中就存在的属性，则其会被 Vue 加入到响应式系统中从而被监听；故当属性 a 的值有变化时，span-a 中的视图也会更新，最终展示 a2。而 span-b 中不显示则是因为 `obj.b` 根本不存在
+![实例视图-2](./imgs/instance-example-2.png)
 
-  - 例子2，`HTML` 同例子1，`JavaScript` 如下
+值得注意的是**只有当 Vue 实例被创建时就已经存在于 `data` 中的 property 才是响应式的**。比如，在下面实例中添加一个新的 property：
 
-    ```javascript
-    let app = new Vue({
-    	el: '#app',
-      data: {
-        obj: {
-          a: 'a1'
-        }
-      }
-    })
-    app.obj.b = 'b'
-    ```
+```javascript
+const vm = new Vue({
+  el: '#app',
+  data: {
+		a: 1
+  }
+})
+// 给实例添加 b property
+vm.b = 2
 
-    最终 span-a 和 span-b 中分别展示什么？span-a 中最终展示 a1。span-b 中仍然不显示，这是因为属性 b 并不是在该实例被创建时 `data` 中就存在的属性，因此 Vue 并没有对其进行监听，那么对 b 的改动不会触发任何视图更新
+// 更改 b
+vm.b = 100 // 视图不会更新
+```
 
-  - 例子3，`HTML` 同例子1，`JavaScript` 如下
+像上面这样没有在实例被创建时添加到 `data` 中的 property，后面对它的改动不会触发任何视图的更新。所以如果你知道你会在晚些时候需要一个 property，但是一开始它为空或不存在，那么你仅需要设置一些初始值。比如：
 
-    ```javascript
-    let app = new Vue({
-    	el: '#app',
-      data: {
-        obj: {
-          a: 'a1'
-        }
-      }
-    })
-    app.obj.a = 'a2'
-    app.obj.b = 'b'
-    ```
+```javascript
+data: {
+  title: '',
+  count: 0,
+  todos: [],
+  visible: false,
+  error: null
+}
+```
 
-    最终 span-a 和 span-b 中分别展示什么？span-a 中最终展示 a2，span-b 中最终展示 b，重点在于**Vue 在更新视图时是异步执行的**，理由如下：
+### 认识生命周期钩子
 
-    - 当属性 a 的值从 a1 变成 a2 时，Vue 会监听到该变化（并不会马上更新视图），同时 Vue 会创建一个视图更新任务到任务队列中
-    - 所以在 Vue 进行视图更新前，会运行完余下代码，即 b = 'b'
-    - 当视图更新时，由于 Vue 会去做 diff，于是 Vue 就会发现 a 和 b 的值都变了，则会更新 span-a 和 span-b
+**生命周期**是指在 Vue 实例被创建时都要经历——比如，数据监听、编译模板、将实例挂载到 DOM 并数据变化时更新 DOM 等这一系列的**初始化过程**。而**钩子**是在这个过程中运行的一些**函数**，其作用是让开发者有在不同阶段添加代码的机会。比如，`created` 钩子用来在实例被创建后执行代码，在这个阶段已经可以访问 `data` 数据对象了：
 
-- 方法
+```javascript
+new Vue({
+  data: {
+    n: 0,
+  },
+  created () {
+    console.log('n: ' + this.n) // n: 0
+  }
+})
+```
 
-  - Vue 实例还有一些有用的示例属性和方法，它们都带有前缀 `$`
-  
-    ```javascript
-    let xxx = {
-    	a: 1
-    }
-    let app = new Vue({
-      el: '#app',
-      data: xxx
-    })
-    // 实例属性，app.$data => Vue 实例观察的数据对象
-    app.$data === xxx // => true
-    // 实例属性，app.$el => Vue 实例使用的根 DOM 元素
-    app.$el === document.querySelector('#app') // => true
-    // 实例方法
-    app.$watch('a', function(newValue, oldValue) {
-      // 这个回调将在 `vm.a` 改变后调用
-    })
-    ```
-### 实例生命周期钩子
-  - 每个 Vue 实例在被创建时都要经过一系列的初始化过程--例如，设置数据监听、编译模板、将实例挂载到 DOM 并在数据变化时更新 DOM 等
+注意，**生命周期钩子的 `this` 上下文会自动指向调用它的 Vue 实例，所以不能用箭头函数定义生命周期钩子**，比如如下代码：
 
-  - 在这个初始化过程中会运行一些叫做**生命周期钩子**的函数，它的作用是让用户在不同阶段添加代码进行操作。比如，`created` 钩子用来在一个实例被创建后执行
+```javascript
+const vm = new Vue({
+	created: () =>{
+    console.log(this)
+  }
+})
+vm.$watch('a', newValue => this.myMethod())
+```
 
-  - **生命周期钩子的 `this` 上下文指向调用它的 Vue 实例**
-
-  - 注意，**不要在选项属性或回调上使用箭头函数**，比如如下代码
-
-    ```javascript
-    let vm = new Vue({
-    	created: () =>{
-        console.log(this)
-      }
-    })
-    vm.$watch('a', newValue => this.myMethod)
-    ```
-
-    由于箭头函数没有 `this`，则上面代码将会有 `Uncaught TypeError: Cannot read property of undefined` 或 `Uncaught TypeError: this.myMethod is not a function` 之类的错误
-
-### 生命周期图示
-
-- 下图为 Vue 实例的生命周期
-
-  ![生命周期图示](./imgs/lifecycle.png)
+由于箭头函数没有 `this`，则上面代码将会有 `Uncaught TypeError: Cannot read property of undefined` 或 `Uncaught TypeError: this.myMethod is not a function` 之类的错误。
