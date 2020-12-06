@@ -97,7 +97,7 @@ export default {
 const vm = new Vue({
   el: '#app',
   data: {
-		a: 1
+    a: 1
   }
 })
 // 给实例添加 b property
@@ -138,7 +138,7 @@ new Vue({
 
 ```javascript
 const vm = new Vue({
-	created: () =>{
+  created: () =>{
     console.log(this)
   }
 })
