@@ -31,11 +31,11 @@
   <script>
   new Vue({
     template: `
-  		<div>
-    		<p>{{ n }}</p>
-  			<button @click="addOne">+1</button>
-    	</div>
-  	`,
+      <div>
+        <p>{{ n }}</p>
+        <button @click="addOne">+1</button>
+      </div>
+    `,
     data: {
       n: 0
     },
@@ -50,7 +50,7 @@
 
   ```vue
   <template>
-  	<div>
+    <div>
       <p>{{ n }}</p>
       <button @click="addOne">+1</button>
     </div>
@@ -72,11 +72,12 @@
 
 在上面的三种模板写法中，都使用了 Vue 特有的**模板语法**，Vue 文档对于模板语法有如下介绍：
 
-> Vue 使用了基于 HTML 的模板语法 ，允许开发者声明式地将 DOM 绑定至底层 Vue 实例的数据。所有 Vue.js 的模板都是合法的 HTML，所以能被遵守规范的浏览器和 HTML 解析器解析
+> Vue 使用了基于 HTML 的模板语法 ，允许开发者声明式地将 DOM 绑定至底层 Vue 实例的数据。所有 Vue.js 的模板都是合法的 HTML，所以能被遵守规范的浏览器和 HTML 解析器解析。
 >
-> 在底层实现上，Vue 将模板编译成虚拟 DOM 渲染函数。结合响应式系统，Vue 能够智能地计算出最少需要重新渲染多少组件，并把 DOM 操作次数减少到最少
+> 在底层实现上，Vue 将模板编译成虚拟 DOM 渲染函数。结合响应式系统，Vue 能够智能地计算出最少需要重新渲染多少组件，并把 DOM 操作次数减少到最少。
 >
-> 也可以不使用模板，直接写渲染（render）函数，使用可选的 JSX 语法
+> 也可以不使用模板，直接写渲染（render）函数，使用可选的 JSX 语法。
+
 接下来就了解一下 Vue 有哪些模板语法？
 
 ### 插值
@@ -147,7 +148,7 @@ new Vue({
 
 #### 绑定 HTML attribute
 
-在开发中，经常需要对 HTML attribute 进行数据绑定。比如，对 `<a>` 元素的 `title` attribute 绑定数据，但是双大括号语法不能作用在 HTML attribute 上，这种情况下需要使用 **`v-bind`** 指令，如下代码：
+在开发中，经常需要对 HTML attribute 进行数据绑定。比如，`<a>` 元素的 `title` attribute 需要绑定数据，但是双大括号语法不能作用在 HTML attribute 上，这种情况下需要使用 **`v-bind`** 指令，如下代码：
 
 ```html
 <div id="#app">
@@ -163,7 +164,7 @@ new Vue({
 </script>
 ```
 
-通过 `v-bind` 指令，`title` attribute 和数据对象中 `linkTitle` property 绑定在一起，当 `linkTitle` property 发生改变时，`title` attribute 也会随之改变。
+通过 `v-bind` 指令将 `title` attribute 和数据对象中的 `linkTitle` property 绑定在一起，当 `linkTitle` property 发生改变时，`title` attribute 也会随之改变。
 
 对于 HTML attribute 是布尔值的情况，比如：
 
@@ -175,7 +176,7 @@ new Vue({
 
 ![v-bind-1](./imgs/v-bind-1.png)
 
-如果 `isDisabled` property 的值为假，比如为 `null`、`undefined`、`false` 时，`disabled` attribute 甚至都不会出现在 `<button>` 元素中：
+如果 `isDisabled` property 的值为假，比如为 `null`、`undefined`、`false` 时，`disabled` attribute 不会出现在 `<button>` 元素中：
 
 ![v-bind-2](./imgs/v-bind-2.png)
 
@@ -200,7 +201,7 @@ new Vue({
 v-指令名:参数.修饰符=值
 ```
 
-指令的作用是，当表达式的值改变时，将其产生的连带影响，响应式地作用于 DOM。比如：
+**指令的作用是，当表达式的值改变时，将其产生的连带影响，响应式地作用于 DOM**。比如：
 
 ```html
 <div v-if="isSeen">你可以看见了</div>
@@ -234,7 +235,7 @@ v-指令名:参数.修饰符=值
 
 这里的 `name` 便是动态参数，它会被作为一个 JavaScript 表达式进行动态求值，求得的值将作为最终的参数来使用。比如，如果 `name` property 的值为 `href`，那么这个绑定等价于 `v-bind:href`。在使用动态参数时，有以下约束：
 
-- 对动态参数的值的约束，动态参数的值正常情况下**应求出一个字符串**，异常情况下的值为 `null`（显性地用于移除绑定）。
+- 对动态参数的值的约束，动态参数的值正常情况下**应求出一个字符串**，异常情况下的值为 `null`（可显性地用于移除绑定）。
 
 - 对动态参数表达式的语法约束：
 
@@ -290,7 +291,6 @@ Vue 为 `v-bind` 和 `v-on` 这两个常用的指令提供了特定的简写：
   <!-- 缩写语法 -->
   <button @click="doSomething">按钮</button>
   
-<!-- 动态参数缩写语法 -->
+  <!-- 动态参数缩写语法 -->
   <button @[event]="doSomething">按钮</button>
   ```
-  
