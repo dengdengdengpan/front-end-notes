@@ -65,8 +65,8 @@ const vm = new Vue({
 
 ```vue
 <template>
-	<p>计数：{{ n }}</p>
-	<button @click="addOne">+1</button>
+  <p>计数：{{ n }}</p>
+  <button @click="addOne">+1</button>
 </template>
 
 <script>
