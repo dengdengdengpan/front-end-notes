@@ -31,7 +31,7 @@ const vm = new Vue({
 vm.nDouble // 2
 vm.nPlus // 3
 vm.nPlus = 5
-vm.n = 4
+vm.n // 4
 ```
 
 `computed` 常用的使用场景——要使用的属性会受到数据对象中某些 property 的变化的影响：
@@ -80,6 +80,32 @@ new Vue({
 ```
 
 这里声明了一个计算属性 `displayUser`，可以像使用普通 property 一样在模板中使用该计算属性。在使用它时，Vue 知道计算属性 `displayUser` 依赖于 `user` property，当 `user` property 发生改变时（比如，用户信息改变、用户信息的展示顺序改变），所有在模板中使用计算属性 `displayUser` 的地方都会自动更新。
+
+如果页面还有一个修改手机的按钮，当点击它时就重新设置用户手机，可以将上面的计算属性改写：
+
+```javascript
+new Vue({
+  // ...
+  computed: {
+    displayUser: {
+      get () {
+        const { user } = this
+        return user.phone || user.nickname || user.email
+      },
+      set (value) {
+        this.user.phone = value
+      } 
+    }
+  },
+  methods: {
+    setPhone () {
+      this.displayUser = '15133339999'
+    }
+  }
+})
+```
+
+这样在点击修改手机按钮时，计算属性 `displayUser` 的 `setter` 会被调用，进而更新用户手机。           
 
 #### 根据性别切换用户列表
 
@@ -158,10 +184,11 @@ new Vue({
         male: '男',
         female: '女'
       }
-      if (this.gender === 'all') {
-        return this.users
+      const { users, gender } = this
+      if (gender === 'all') {
+        return users
       } else {
-        return this.users.filter(user => user.gender === genderHash[this.gender])
+        return users.filter(user => user.gender === genderHash[gender])
       }
     }
   },
@@ -178,4 +205,92 @@ new Vue({
 
 ![使用计算属性实现切换用户列表](./imgs/computed-2.gif)
 
-通过上面两个场景示例对计算属性地使用有了更多认识——**计算属性可以让模板更简洁、逻辑更清晰、代码更易于维护**。
+通过上面两个场景示例对计算属性的使用有了更多认识——**计算属性可以让模板更简洁、逻辑更清晰、代码更易于维护**。
+
+### 计算属性 vs 方法
+
+在根据性别切换用户列表这个场景示例中，也可以使用方法来达到相同效果。实现思路，由于用户列表的数据源 `users` property 不能被修改，所以新增一个 `displayUsers` property，并在 `created` 钩子中将 `users` 赋值给 `displayUsers`，同时添加一个根据性别展示不同用户的方法 `showUsers`：
+
+```javascript
+// ...
+new Vue({
+  // ...
+  data: {
+    // 新增 displayUsers
+    displayUsers: []
+  },
+  created () {
+    // 在 created 钩子赋值
+    this.displayUsers = this.users
+  },
+  methods: {
+    // 新增 showUsers 方法
+    showUsers (gender) {
+      const genderHash = {
+        male: '男',
+        female: '女'
+      }
+      const { users } = this
+      if (gender === 'all') {
+        this.displayUsers = users
+      } else {
+        this.diplayUsers = users.filter(user => user.gender === genderHash[gender]))
+      }
+    },
+    setGender (genderString) {
+      this.showUsers(genderString)
+    }
+  }
+})
+```
+
+使用方法和计算属性的最终结果都是相同，但不同的是**计算属性可以基于它们的响应式依赖进行缓存，只有在相关依赖发生改变时才会重新计算；而调用方法则总会重新执行函数**。
+
+- 通过方法实现时，在 `showUsers` 方法中添加一个 log：
+
+  ```javascript
+  new Vue({
+    methods: {
+      showUsers (gender) {
+        console.log('showUsers 方法被调用了')
+        // ...
+      }
+    }
+  })
+  ```
+
+  当点击不同的切换按钮时：
+
+  ![methods-log](./imgs/methods-log.gif)
+
+  **方法总是会重新执行，没有缓存结果**。无论是点击不同按钮还是连续点击相同按钮，`showUsers` 方法都会被重新调用。
+
+- 通过计算属性实现时，在计算属性 `displayUsers` 中添加一个 log：
+
+  ```javascript
+  new Vue({
+    // ...
+    computed: {
+      displayUsers () {
+        const genderHash = {
+          all: '全部',
+          male: '男',
+          female: '女'
+        }
+        // ...
+        console.log(`displayUsers 计算了 ${genderHash[gender]} 一次`)
+        // ...
+      }
+    }
+  })
+  ```
+
+  当点击不同的切换按钮时：
+
+  ![computed-log](./imgs/computed-log.gif)
+
+  **计算属性 `displayUsers` 会根据依赖的 `gender` property 进行计算，并且会缓存计算结果**。当点击不同按钮时，`gender` 发生了改变，`displayUsers` 会马上重新求值；当连续点击相同按钮时，`gender` 没有发生改变，`displayUsers` 会立即返回之前的计算结果，而不会重新求值。
+
+如果有一个场景需要进行大量计算，从而导致页面开销性能较大。使用计算属性则可以利用缓存减少页面开销；使用方法会每次都重新计算，从而可能2会影响用户体验。
+
+### watch

@@ -22,9 +22,9 @@ new Vue({
 
 在创建 Vue 实例后，可以将其在控制台打出，会发现 Vue 实例是一个对象：
 
-![实例](./imgs/property-method.png)
+![实例的属性和方法](./imgs/property-method.png)
 
-Vue 实例这个对象暴露出来一些有用的属性和方法，它们都前缀 `$`，以便与开发者定义的 property 区分开来。比如：
+Vue 实例这个对象暴露出来一些有用的属性和方法，它们都含有前缀 `$`，以便与开发者定义的 property 区分开来。比如：
 
 ```javascript
 const data = { n: 0 }
@@ -33,10 +33,10 @@ const vm = new Vue({
   data: data
 })
 
-// $el 属性：使用的根 DOM 元素
+// $el property：实例使用的根 DOM 元素
 vm.$el === document.getElementById('app') // true
 
-// $data 属性：Vue 实例的属数据对象
+// $data property：Vue 实例观察的数据对象
 vm.$data === data // true
 
 // $watch 方法
@@ -61,7 +61,7 @@ const vm = new Vue({
 })
 ```
 
-在一个 Vue 实例被创建时，它会将 `data` 对象中所有的 property 加入到 **Vue 的响应式系统**。当这些 property 的值发生改变时，视图将会产生响应：重新渲染并匹配更新为最新的值。比如，如下代码：
+在一个 Vue 实例被创建时，它会将 `data` 对象中所有的 property 加入到 **Vue 的响应式系统**。当这些 property 的值发生改变时，视图将会产生响应，重新渲染并匹配更新为最新的值。比如，如下代码：
 
 ```vue
 <template>
@@ -87,7 +87,7 @@ export default {
 
 ![实例视图-1](./imgs/instance-example-1.png)
 
-由于 +1 按钮的作用是将 `data` 中的 `n` property 自增 1，所以当首次点击 +1 按钮时，`n` 的值会变为 2，视图也会随之匹配更新：
+由于 +1 按钮的作用是将 `data` 中的 `n` property 自增 1，所以当首次点击 +1 按钮时，`n` 的值会变为 1，视图也会随之匹配更新：
 
 ![实例视图-2](./imgs/instance-example-2.png)
 
@@ -107,7 +107,7 @@ vm.b = 2
 vm.b = 100 // 视图不会更新
 ```
 
-像上面这样没有在实例被创建时添加到 `data` 中的 property，后面对它的改动不会触发任何视图的更新。所以如果你知道你会在晚些时候需要一个 property，但是一开始它为空或不存在，那么你仅需要设置一些初始值。比如：
+像上面 `b` property 这种没有在实例被创建时添加到 `data` 中的 property，后面对它的改动不会触发任何视图的更新。所以如果会在晚些时候需要一个 property，但一开始它为空或不存在，那么你仅需要设置一些初始值。比如：
 
 ```javascript
 data: {
