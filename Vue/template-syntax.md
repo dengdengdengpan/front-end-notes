@@ -4,7 +4,7 @@
 
 在 Vue 中，关于模板的写法有以下三种：
 
-- Vue 完整版，直接写在 HTML 里：
+- 使用 Vue 完整版，直接写在 HTML 里：
 
   ```html
   <div id="app">
@@ -24,7 +24,7 @@
   </script>
   ```
 
-- Vue 完整版，写在 `template` 选项里：
+- 使用 Vue 完整版，写在 `template` 选项里：
 
   ```html
   <div id="app"></div>
@@ -46,7 +46,7 @@
   </script>
   ```
 
-- Vue 运行时版，配合 `*.vue` 单文件组件使用：
+- 使用 Vue 运行时版，配合 `*.vue` 单文件组件使用：
 
   ```vue
   <template>
