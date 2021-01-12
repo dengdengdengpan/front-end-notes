@@ -1,16 +1,16 @@
-## 前端学习笔记
+# 前端学习笔记
 
 ### HTML
 
 ### CSS
 
-- [CSS 层叠](./CSS/cascade.md)
-- [Flex 布局](./CSS/flex.md)
-
 ### JavaScript
 
-## Vue 全家桶
+### Vue
 
-- [理解 Vue 不同版本的区别](./Vue/Vue-不同版本.md)
-- [学习构造选项](./Vue/Vue-构造选项.md)
+- [理解 Vue 不同构建版本](./Vue/build-version.md)
+- [Vue 实例](./Vue/instance.md)
+- [模板语法](./Vue/template-syntax.md)
+
+
 
