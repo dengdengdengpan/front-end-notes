@@ -191,8 +191,8 @@ new Vue({
     }
   },
   methods: {
-    setGender (genderString) {
-      this.gender = genderString
+    setGender (gender) {
+      this.gender = gender
     }
   }
 })
@@ -289,14 +289,17 @@ new Vue({
 
 ### watch
 
-**`watch` 是侦听器，可以通过 `watch` 观察数据对象中 property 值的变化进而执行一些操作，`watch` 是一个异步的过程**。`watch` 的使用方法有以下几种：
+**`watch` 是侦听器，可以通过 `watch` 观察数据对象中 property 值的变化进而执行一些操作，`watch` 是一个异步的过程**。`watch` 的用法是一个对象，键是需要观察的表达式，值是对应的回调函数，其中值的表现形式可以是函数、方法名、包含选项的对象、包含回调的数组：
 
 ```javascript
 new Vue({
   data: {
     a: 1,
     b: 2,
-    c: 3,
+    c: {
+      c1: '111',
+      c2: '222'
+    },
     d: 4,
     e: 5,
     user: {
@@ -304,8 +307,6 @@ new Vue({
       age: 18
     }
   },
-  // 需被观察的 data 中的 property 作为 watch 的 key
-  // value 是对应的回调函数，表现形式可以是函数、方法名、包含选项的对象、包含回调的数组
   watch: {
     //第一种，值为函数
     a (newValue, oldValue) {
@@ -313,16 +314,16 @@ new Vue({
     },
     // 第二种，值为方法名
     b: 'methodName',
-    // 第三种，值为包含选项的对象，选项有：deep和immediate，回调函数是 handler
+    // 第三种，值为包含选项的对象，选项有：deep 和 immediate，回调函数是 handler
     c: {
       handler (newValue, oldValue) {},
-      // deep: true 表示被 watch 的 property 发生改变时都会调用 handler 回调，不论其被嵌套多深
-      deep: true 
+      // deep: true 表示该回调会在被监听的对象 c 的属性改变时被调用，不论属性被嵌套多深
+      deep: true
     },
     d: {
       handler: 'methodName',
       // watch 中一开始时 handler 回调并不会执行，只有在 d property 改变时才会调用回调
-      // 设置 immediate: true 则 handler 回调会在一开始就被调用
+      // 设置 immediate: true 表示 handler 回调会在一开始就被调用
       immediate: true
     },
     // 第四种，值为一个包含回调数组，它们会被逐一调用
@@ -334,60 +335,141 @@ new Vue({
         // 选项
       }
     ],
-    // key 还可以是嵌套在对象中的某个 property
+    // key 还可以是 data 中某个对象中的属性
     'user.nickname' (newValue, oldValue) {}
   }
 })
 ```
 
-值得注意的是，**不应在 `watch` 使用箭头函数**。
+值得注意的是，**不应在 `watch` 中使用箭头函数**。
 
 #### 何谓数据变化
 
-`watch` 会在观察的 property 的值发生变化时作出响应，接下来了解一下 property 值的变化：
+`watch` 会在它观察的 property 的值发生变化时作出响应，接下来了解一下 property 值的变化：
 
-```html
-<div id="app">
-  <button @click="n += 1">按钮1（n + 1）</button>
-  <button @click="visible = !visible">按钮2（!visible）</button>
-  <button @click="user = { nickname: '路飞' }">按钮3（user = 新对象）</button>
-  <button @click="user.nickname = '娜美'">按钮4（nickname = '娜美'）</button>
-</div>
+```vue
+<template>
+  <div>
+    <button @click="n += 2">按钮1</button>
+    <button @click="visible = !visible">按钮2</button>
+    <button @click="obj1.a += 'ggg'">按钮3</button>
+    <button @click="obj2 = { b: 'bbb' }">按钮4</button>
+  </div>
+</template>
+
 <script>
-new Vue({
-  el: '#app',
-  data: {
-    n: 1,
-    visible: false,
-    user: {
-      nickname: '路飞'
+export default {
+  data () {
+    return {
+      n: 1,
+      visible: false,
+      obj1: {
+        a: 'aaa'
+      },
+      obj2: {
+        b: 'bbb'
+      }
     }
   },
   watch: {
     n () {
-      console.log('n 变了')
+      console.log('点击按钮1：n 变了')
     },
     visible () {
-      console.log('visible 变了')
+      console.log('点击按钮2：visible 变了')
     },
-    user () {
-      console.log('user 变了')
+    obj1 () {
+      console.log('点击按钮3：obj1 变了')
     },
-    'user.nickname' () {
-      console.log('user.nickname 变了')
+    'obj1.a' () {
+      console.log('点击按钮3：obj1.a 变了')
+    },
+    obj2 () {
+      console.log('点击按钮4：obj2 变了')
+    },
+    'obj2.b' () {
+      console.log('点击按钮4：obj2.b 变了f')
     }
   }
-})
+}
 </script>
 ```
 
-点击上面代码中不同按钮时会修改数据对象中某些 property 的值，而 `watch` 会在监听到这些 property 值的变化时在控制台打印出以下内容：
+点击按钮时会修改数据对象中某些 property 的值，而 `watch` 会在监听到这些 property 值的变化时在控制台打印出相应内容：
 
-![watch-1](./imgs/watch-1.png)
+![watch-数据变化](./imgs/watch-1.png)
 
-嘻嘻嘻
+对于像 `n`、`visible` 、`obj1.a` 这种属于基本类型的 property，只要它们的值改变，就会被 `watch` 监听。
 
-对于像 `n`、`visible` 这种属于基本类型的 property，只要它们的值改变，就会被 `watch` 监听。
+对于对象这种属于复杂类型的 property，只有当其引用值的地址发生改变才会被 `watch` 监听。点击按钮3执行 `obj1.a += 'ggg'` 时，只有 `obj1.a` 这个基本类型的值变化了，但 `obj1` 的引用值的地址并未改变，所以未被 `watch` 监听。点击按钮4执行 `obj2 = { b: 'bbb' }` 时，尽管 `obj2` 由赋值得到的新对象的键值对和之前一样，但 `obj2` 引用值的地址发生了改变，所以 `obj2` 会被 `watch` 监听。
 
-对于 `user` 这种属于复杂类型的 property，只有当其引用值的地址发生改变才会被 `watch` 监听。所以点击第三个按钮执行 `user = { nickname: '路飞' }` 时，`user` 引用值的地址发生了改变，
+如果要想在 `obj1.a` 发生改变时也让 `watch` 认为 `obj1` 也改变了，可以使用 `deep: true`：
+
+```vue
+//...
+<script>
+export default {
+	// ...
+  watch: {
+    obj1: {
+      handler () {
+        console.log('点击按钮3：obj1 变了')
+      },
+      deep: true
+    }
+  }
+}
+</script>
+```
+
+点击按钮3时，控制台打印结果如下：
+
+![watch-deep-true](./imgs/watch-2.png)
+
+#### watch 是异步的
+
+页面中有一个展示当前值和操作历史的模块，如下图：
+
+![watch-异步](./imgs/watch-3.png)
+
+当点击不同的操作按钮时，当前值和操作记录都会作相应的改变，代码如下：
+
+```vue
+<template>
+  <div class="about">
+    <p>当前值：{{ n }}</p>
+    <div>
+      <button @click="n += 2">+2</button>
+      <button @click="n += 5">+5</button>
+      <button @click="n -= 3">-3</button>
+      <button @click="n -= 1">-1</button>
+      <button :disabled="history.length === 0" @click="revoke">撤销</button>
+    </div>
+    <p>操作记录：{{ history }}</p>
+  </div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      n: 0,
+      history: [],
+      inRevokeMode: false
+    }
+  },
+  watch: {
+    n (newValue, oldValue) {
+      this.history.push({ from: oldValue, to: newValue })
+    }
+  },
+  methods: {
+    revoke () {
+      const lastItem = this.history.pop()
+      this.n = lastItem.from
+    }
+  }
+}
+</script>
+```
 
