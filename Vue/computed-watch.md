@@ -42,34 +42,37 @@ console.log(vm.nDouble) // 8
 
 页面某个地方需要按照昵称、手机、邮件的顺序展示用户信息，如果昵称不存在就展示手机；如果昵称和手机都不存在就展示邮件。同时，有很多地方都需要像这样展示用户信息：
 
-```html
-<div id="app">
+```vue
+<template>
   <!-- 很多地方都需要这样展示用户信息 -->
   <p>用户信息：{{ user.nickname || user.phone || user.email }}</p>
-</div>
+</template>
+
 <script>
-new Vue({
-  el: '#app',
-  data: {
-    user: {
-      nickname: '路飞',
-      phone: '13389896666',
-      email: 'lufei@qq.com'
+export default {
+  data () {
+    return {
+      user: {
+        nickname: '路飞',
+        phone: '13389896666',
+        email: 'lufei@qq.com'
+      } 
     }
   }
-})
+}
 </script>
 ```
 
 通过上面代码就可以实现按照既定顺序展示用户信息的需求，但是有天如果业务变更，用户信息的展示顺序变为手机、昵称、邮件，那么很多地方都需要修改代码来满足需求变更。这种场景下，可以使用 `computed`：
 
 ```html
-<div id="app">
+<template>
   <!-- 使用计算属性展示用户信息 -->
   <p>用户信息：{{ displayUser }}</p>
-</div>
+</template>
+
 <script>
-new Vue({
+export default {
   // ...
   computed: {
     displayUser () {
@@ -77,7 +80,7 @@ new Vue({
       return phone || nickname || email
     }
   }
-})
+}
 </script>
 ```
 
@@ -85,8 +88,9 @@ new Vue({
 
 如果页面还有一个修改手机号的按钮，当点击它时就重新设置用户手机号，可以将上面的计算属性改写为：
 
-```javascript
-new Vue({
+```vue
+<script>
+export default {
   // ...
   computed: {
     displayUser: {
@@ -104,7 +108,8 @@ new Vue({
       this.displayUser = '15133339999'
     }
   }
-})
+}
+</script>
 ```
 
 这样在点击修改手机按钮时，计算属性 `displayUser` 的 `setter` 会被调用，进而更新 `user.phone` property 的值。           
@@ -113,19 +118,22 @@ new Vue({
 
 在页面中有一个展示用户昵称和性别的列表，代码如下：
 
-```html
-<div id="app">
+```vue
+<template>
   <div>
-    <button>全部</button>
-    <button>男</button>
-    <button>女</button>
+    <div>
+      <button>全部</button>
+      <button>男</button>
+      <button>女</button>
+    </div>
+    <ul>
+      <li v-for="user in users" :key="user.id">
+        {{ user.nickname }} - {{ user.gender }}
+      </li>
+    </ul>
   </div>
-  <ul>
-    <li v-for="user in users" :key="user.id">
-      {{ user.nickname }} - {{ user.gender }}
-    </li>
-  </ul>
-</div>
+</template>
+
 <script>
 // 创建用户
 let id = 0
@@ -134,8 +142,7 @@ const createUser = (nickname, gender) => {
   return { id, nickname: nickname, gender: gender }
 }
 
-new Vue({
-  el: '#app',
+export default {
   data: {
     users: [
       createUser('路飞', '男'),
@@ -145,7 +152,7 @@ new Vue({
       createUser('罗宾', '女')
     ]
   }
-})
+}
 </script>
 ```
 
@@ -157,25 +164,27 @@ new Vue({
 
 实现思路，页面用户列表的数据源更改为计算属性 `displayUsers`，它根据 `gender` property 的变化展示不同性别的用户：
 
-```html
-<div id="app">
+```vue
+<template>
   <div>
-    <!-- 给切换按钮添加事件 -->
-    <button @click="setGender('all')">全部</button>
-    <button @click="setGender('male')">男</button>
-    <button @click="setGender('female')">女</button>
+    <div>
+      <!-- 给切换按钮添加事件 -->
+      <button @click="setGender('all')">全部</button>
+      <button @click="setGender('male')">男</button>
+      <button @click="setGender('female')">女</button>
+    </div>
+    <ul>
+      <!-- 页面用户列表的数据源改为计算属性 displayUsers -->
+      <li v-for="u in displayUsers" :key="u.id">
+        {{ u.nickname }} - {{ u.gender }}
+      </li>
+    </ul>
   </div>
-  <ul>
-    <!-- 页面用户列表的数据源改为计算属性 displayUsers -->
-    <li v-for="u in displayUsers" :key="u.id">
-      {{ u.nickname }} - {{ u.gender }}
-    </li>
-  </ul>
-</div>
+</template>
+
 <script>
 // ...
-new Vue({
-  el: '#app',
+export default {
   data: {
     // ...
     gender: 'all'
@@ -195,7 +204,7 @@ new Vue({
       this.gender = gender
     }
   }
-})
+}
 </script>
 ```
 
@@ -209,10 +218,10 @@ new Vue({
 
 在根据性别切换用户列表这个场景示例中，也可以使用方法来达到相同效果。实现思路，首先用户列表的数据源 `users` property 不能被修改，所以新增一个 `displayUsers` property，并在 `created` 钩子中将 `users` 赋值给 `displayUsers`，同时添加一个根据性别展示不同用户的方法 `showUsers`：
 
-```javascript
+```vue
+<script>
 // ...
-new Vue({
-  // ...
+export default {
   data: {
     // 新增 displayUsers
     displayUsers: []
@@ -235,22 +244,25 @@ new Vue({
       this.showUsers(gender)
     }
   }
-})
+}
+</script>
 ```
 
 使用方法和计算属性都能实现需求，但不同的是**计算属性可以基于它们的响应式依赖进行缓存，只有在相关依赖发生改变时才会重新计算；而调用方法则总是会重新执行函数**。
 
 - 通过方法实现时，在 `showUsers` 方法中添加一个 log：
 
-  ```javascript
-  new Vue({
+  ```vue
+  <script>
+  export default {
     methods: {
       showUsers (gender) {
         console.log('showUsers 方法被调用了')
         // ...
       }
     }
-  })
+  }
+  </script>
   ```
 
   当点击按钮时：
@@ -261,31 +273,28 @@ new Vue({
 
 - 通过计算属性实现时，在计算属性 `displayUsers` 中添加一个 log：
 
-  ```javascript
-  new Vue({
+  ```vue
+  <script>
+  export default {
     // ...
     computed: {
       displayUsers () {
-        const genderHash = {
-          all: '全部',
-          male: '男',
-          female: '女'
-        }
         // ...
         console.log(`displayUsers 计算了 ${genderHash[gender]} 一次`)
         // ...
       }
     }
-  })
+  }
+  </script>
   ```
-
+  
   当点击按钮时：
-
-  ![computed-log](./imgs/computed-log.gif)
-
-  **计算属性 `displayUsers` 会根据依赖的 `gender` property 进行计算，并且会缓存计算结果**。当点击不同按钮时，`gender` 发生了改变，`displayUsers` 会马上重新求值；当连续点击相同按钮时，`gender` 没有发生改变，`displayUsers` 会立即返回之前的计算结果，而不会重新求值。
-
-  需要缓存的好处在于，如果有一个场景需要进行大量计算，页面开销性能较大，使用计算属性则可以利用缓存减少页面开销；使用方法会每次都重新计算，可能会影响用户体验。
+  
+![computed-log](./imgs/computed-log.gif)
+  
+**计算属性 `displayUsers` 会根据依赖的 `gender` property 进行计算，并且会缓存计算结果**。当点击不同按钮时，`gender` 发生了改变，`displayUsers` 会马上重新求值；当连续点击相同按钮时，`gender` 没有发生改变，`displayUsers` 会立即返回之前的计算结果，而不会重新求值。
+  
+需要缓存的好处在于，如果有一个场景需要进行大量计算，页面开销性能较大，使用计算属性则可以利用缓存减少页面开销；使用方法会每次都重新计算，可能会影响用户体验。
 
 ### watch
 
@@ -432,7 +441,7 @@ export default {
 
 ![watch-异步](./imgs/watch-3.png)
 
-当点击不同的操作按钮时，当前值和操作记录都会作相应的改变，代码如下：
+当点击不同的加减按钮时，当前值和操作记录都会作相应的改变；点击撤销按钮会把当前值和操作记录恢复到之前的数据，代码如下：
 
 ```vue
 <template>
@@ -472,7 +481,7 @@ export default {
 </script>
 ```
 
-在页面中进行加减按钮操作后，再点击撤销按钮，会发现 `history` 并没有撤销到最后一次加减操作前的数据。这是由于 `n` 一直被 `watch` 着，`watch` 会把撤销操作里对 `n` 的赋值当成一个新的操作记录添加到 `history` 中。解决办法是添加一个状态来判断是否处于撤销中：
+在页面中进行加减按钮操作后，再点击撤销按钮，会发现 `history` 并没有恢复到最后一次加减操作前的数据。这是由于 `n` 一直被 `watch` 着，`watch` 会把撤销操作里对 `n` 的赋值当成一个新的操作记录添加到 `history` 中，解决办法是添加一个状态来判断是否处于撤销中：
 
 ```vue
 <script>
@@ -506,7 +515,7 @@ export default {
 </script>
 ```
 
-更新了上面的代码后再次进行之前的操作，会发现 `history` 中还是会有 `n` 在撤销操作中的数据。这个时候验证一下点击撤销按钮后是否处于撤销状态：
+更新上面代码后再次进行之前的操作，会发现 `history` 中还是会有 `n` 在撤销操作中的数据，通过 log 验证点击撤销按钮后处于什么撤销状态：
 
 ```vue
 <script>
@@ -526,11 +535,11 @@ export default {
 </script>
 ```
 
-在控制台中会打印出如下内容：
+控制台中打印出如下内容：
 
 ![watch-异步](./imgs/watch-4.gif)
 
-尽管点击撤销按钮中设置了处于撤销状态，但在 `watch` 中 log 出来仍然是不处于撤销状态。这是因为 `watch` 是异步的，它会等当前代码执行完了才对 `n` 的变化进行操作，大体流程如下：
+尽管在撤销操作中设置了处于撤销状态，但在 `watch` 中通过 log 可以知道仍然是不处于撤销状态。这是因为 `watch` 是异步的，它会等当前代码执行完了才对 `n` 的变化进行操作，大体流程如下：
 
 ```javascript
 // 点击撤销按钮，先设置处于撤销状态
@@ -568,4 +577,56 @@ export default {
 
 #### watch vs computed
 
-中
+在展示用户信息的场景示例中，也可以使用 `watch` 实现同样的效果：
+
+```vue
+<template>
+  <div class="about">
+    <p>用户信息：{{ displayUser }}</p>
+    <button @click="user.nickname = '索隆'">修改用户名</button>
+  </div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      user: {
+        nickname: '路飞',
+        phone: '13389896666',
+        email: 'lufei@qq.com'
+      },
+      displayUser: ''
+    }
+  },
+  watch: {
+    // watch user 每个 key 的变化
+    'user.nickname': {
+      handler () {
+        const { user: { nickname, phone, email } } = this
+        this.displayUser = nickname || phone || email
+      },
+      // Vue 认为在开始时数据从无到有不是一个变化的过程，所以页面中的 displayUser 为空
+      // immediate: true 表示数据从无到有也是变化的过程，页面中 displayUser 会有 nickname || phone || email 表达式的值
+      immediate: true
+    },
+    'user.phone': {
+      handler () {
+        const { user: { nickname, phone, email } } = this
+        this.displayUser = nickname || phone || email
+      },
+      immediate: true
+    },
+    'user.email': {
+      handler () {
+        const { user: { nickname, phone, email } } = this
+        this.displayUser = nickname || phone || email
+      },
+      immediate: true
+    }
+  }
+}
+</script>
+```
+
+相比较 `computed`，使用 `watch` 实现的代码，代码更多且有重复。在大多数 `computed` 和 `watch` 都能实现的情况下，尽量使用 `computed`，而如果需要在数据变化时进行一些操作，则使用 `watch`。
