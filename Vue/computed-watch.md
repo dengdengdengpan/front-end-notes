@@ -454,8 +454,7 @@ export default {
   data () {
     return {
       n: 0,
-      history: [],
-      inRevokeMode: false
+      history: []
     }
   },
   watch: {
@@ -473,3 +472,100 @@ export default {
 </script>
 ```
 
+在页面中进行加减按钮操作后，再点击撤销按钮，会发现 `history` 并没有撤销到最后一次加减操作前的数据。这是由于 `n` 一直被 `watch` 着，`watch` 会把撤销操作里对 `n` 的赋值当成一个新的操作记录添加到 `history` 中。解决办法是添加一个状态来判断是否处于撤销中：
+
+```vue
+<script>
+export default {
+  data () {
+    return {
+      // ...
+      // 添加一个状态表示是否处于撤销状态，默认是不处于
+      inRevokeStatus: false
+    }
+  },
+  watch: {
+    n (newValue, oldValue) {
+      // 不处于撤销状态才会添加项到操作记录中
+      if (!this.inRevokeStatus) {
+        this.history.push({ from: oldValue, to: newValue })
+      }
+    }
+  },
+  methods: {
+    revoke () {
+      // 点击撤销按钮后，将 inRevokeStatus 设置为处于撤销状态
+      this.inRevokeStatus = true
+      const lastItem = this.history.pop()
+      this.n = lastItem.from
+      // 对 n 赋值后将 inRevokeStatus 设置为不处于撤销状态
+      this.inRevokeStatus = false
+    }
+  }
+}
+</script>
+```
+
+更新了上面的代码后再次进行之前的操作，会发现 `history` 中还是会有 `n` 在撤销操作中的数据。这个时候验证一下点击撤销按钮后是否处于撤销状态：
+
+```vue
+<script>
+export default {
+  // ...
+  watch: {
+    n (newValue, oldValue) {
+      console.log('是否处于撤销状态：', this.inRevokeStatus ? '处于' : '不处于')
+      // 不处于撤销状态才会添加项到操作记录中
+      if (!this.inRevokeStatus) {
+        this.history.push({ from: oldValue, to: newValue })
+      }
+    }
+  },
+  // ...
+}
+</script>
+```
+
+在控制台中会打印出如下内容：
+
+![watch-异步](./imgs/watch-4.gif)
+
+尽管点击撤销按钮中设置了处于撤销状态，但在 `watch` 中 log 出来仍然是不处于撤销状态。这是因为 `watch` 是异步的，它会等当前代码执行完了才对 `n` 的变化进行操作，大体流程如下：
+
+```javascript
+// 点击撤销按钮，先设置处于撤销状态
+this.inRevokeStatus = true
+// 对 n 赋值，这个时候 n 变化了，但是 watch 不会立即执行
+this.n = lastItem.from
+// 设置不处于撤销状态
+this.inRevokeStatus = false
+// 最后 watch 才执行 n 变化的操作，这样的话永远不处于撤销状态，所以点击撤销按钮 history 中永远都会添加新的操作记录
+```
+
+要想解决上述问题，可以使用 `$nextTick`：
+
+```vue
+<script>
+export default {
+  methods: {
+    revoke () {
+      this.inRevokeStatus = true
+      const lastItem = this.history.pop()
+      this.n = lastItem.from
+      // nextTick 会等 watch n 执行完后才设置不处于撤销状态
+      this.$nextTick(() => {
+        this.inRevokeStatus = false
+      })
+    }
+  }
+}
+</script>
+```
+
+最终效果如下图：
+
+![watch-异步](./imgs/watch-5.gif)
+
+#### watch vs computed
+
+中
