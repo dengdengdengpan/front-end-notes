@@ -1,198 +1,302 @@
 # Class 与 Style 绑定
 
-### 前言
+在使用 Vue 开发项目时，经常会有操作元素的 `class` 和 `style` 的需求，比如，开发 Tab 组件时通过切换元素的 `class` 展示被选中的样式，或者有时需要直接更改组件中元素的内联样式。
 
-在使用 Vue 开发组件的过程中，经常会有切换 class 来改变元素样式的需求，对此我们可以使用 `v-bind` 绑定 class 来实现。同时，Vue 在 `v-bind` 用于 class 和 style 时做了专门的增强，`v-bind` 表达式结果的类型除了字符串，还可以是对象或数组。
+> 因为 `class` 和 `style` 都是 HTML attribute，所以可以通过 `v-bind` 进行处理：只需要绑定的表达式计算出字符串结果即可。不过，字符串拼接麻烦且容易出错。因此，`v-bind` 在用于 `class` 和 `style` 时，Vue 做了专门的增强，表达式结果的类型除了字符串，还可以是对象和数组。
 
-### 绑定 HTML Class
+### 绑定 Class
 
-##### 对象语法
+#### 字符串语法
 
-- 可以把一个对象传给  `v-bind:class`，用以动态地切换 class：
+`v-bind:class` 绑定的表达式计算结果可以是字符串，比如：
 
-  ```vue
-  <template>
-     <div v-bind:class="{ active: isActive }"></div>
-  </template>
-  
-  <script>
-  export default {
-    data () {
-      return {
-        isActive: true
+```vue
+<template>
+  <div :class="activeClass">绑定 HTML Class</div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      activeClass: 'active'
+    }
+  }
+}
+</script>
+```
+
+结果渲染如下图：
+
+![vue-class-1](./imgs/class-1.png)
+
+同时，使用字符串语法也可以绑定多个 class，代码如下：
+
+```vue
+<template>
+  <div :class="classes">绑定多个 class</div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      classes: 'xxx yyy zzz'
+    }
+  }
+}
+</script>
+```
+
+结果渲染如下图：
+
+![vue-class-2](./imgs/class-2.png)
+
+此外，绑定的表达式也可以复杂一点：
+
+```vue
+<template>
+  <button :class="type && `button-${type}`">按钮</button>
+</template>
+
+<script>
+export default {
+  props: {
+    type: {
+			type: String,
+      default: 'primary'
+    }
+  }
+}
+</script>
+```
+
+在页面中使用按钮组件后结果渲染如下图：
+
+![vue-class-3](./imgs/class-3.png)
+
+**`v-bind:class` 指令可以与普通的 class attribute 共存**，有如下模板：
+
+```vue
+<template>
+  <button class="button" :class="type && `button-${type}`">按钮</button>
+</template>
+```
+
+结果渲染如下图：
+
+![vue-class-4](./imgs/class-4.png)
+
+### 对象语法
+
+绑定 class 时，也可以**传给 `v-bind:class` 一个对象，以动态地切换 class**：
+
+```vue
+<template>
+  <div :class="{ active: isActive }" />
+</template>
+```
+
+在上述代码中，`active` class 是否存在取决于数据 property `isActive` 值的真假。比如，当 `isActive` 值为真时，渲染结果如下图：
+
+![vue-class-5](./imgs/class-5.png)
+
+同时，也可以在对象中传入更多的字段来**动态**切换多个 class。而且，绑定 class 的对象语法也可以和普通的 class attribute 共存。比如，有如下模板：
+
+```vue
+<template>
+  <div class="demo" :class="{ active: isActive, disabled: isDisabled, loading: isLoading }" />
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      isActive: true,
+      isDisabled: false,
+      isLoading: true
+    }
+  }
+}
+</script>
+```
+
+最终渲染结果如下图：
+
+![vue-class-object-6](./imgs/class-6.png)
+
+当数据对象中 `isActive`、`isDisabled`、`isLoading` 有变化时，class 列表会动态更新，当有如下修改时：
+
+```vue
+<script>
+export default {
+  data () {
+    return {
+      isActive: false,
+      isDisabled: true,
+      isLoading: false
+    }
+  }
+}
+</script>
+```
+
+class 列表将变成下图：
+
+![vue-class-object-2](./imgs/class-7.png)
+
+在使用对象语法时，也可不必将对象内联在模板里：
+
+```vue
+<template>
+  <div class="demo" :class="classObject" />
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      classObject: {
+        active: true,
+        disabled: false,
+        loading: true
       }
     }
   }
-  </script>
-  ```
+}
+</script>
+```
 
-  上面 `active` 这个 class 是否存在取决于数据属性 `isActive` 的真值（在 JS 中，真值指的是在布尔值上下文中，转换后的值为真的值）
+在页面上渲染结果如下图：
 
-- 也可以在对象中传入更多的字段来动态切换多个 class。同时，`v-bind:class` 也可以和普通 class attribute 共存。比如有如下模板：
+![vue-class-object-6](./imgs/class-6.png)
 
-  ```vue
-  <temlpate>
-    <div 
-      class="test" 
-      :class="{ active: isActive, 'is-disabled': isDisabled }"
-    >
-    </div>
-  </temlpate>
-  
-  <script>
-  export default {
-    data () {
+在 `v-bind:class` 中也可以绑定一个返回对象的计算属性，这是一种更常用的模式：
+
+```vue
+<template>
+  <div class="demo" :class="classObject" />
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      isActive: true,
+      isDisabled: false,
+      isLoading: true
+    }
+  },
+  computed: {
+    classObject () {
+      const { isActive, isDisabled, isLoading } = this
       return {
-        isActive: true,
-        isDisabled: true
+        active: isActive,
+        disabled: isDisabled,
+        loading: isLoading
       }
     }
   }
-  </script>
-  ```
+}
+</script>
+```
 
-  最终渲染结果如下：
+#### 数组语法
 
-  ```html
-  <div class="test active is-disabled"></div>
-  ```
+在绑定 class 时，也可以**传一个数组给 `v-bind:class`，以应用一个 class 列表**：
 
-- class 绑定的对象可以放在 `data` 中：
+```vue
+<template>
+  <div class="demo" :class="[activeClass, loadingClass]" />
+</template>
 
-  ```vue
-  <template>
-    <div class="test" :class="classObject"></div>
-  </template>
-  
-  <script>
-  export default {
-    data () {
-      return {
-        classObject: {
-          active: true,
-          'is-disabled': true
-        }
-      }
+<script>
+export default {
+  data () {
+    return {
+      activeClass: 'active',
+      loadingClass: 'loading'
     }
   }
-  </script>
-  ```
+}
+</script>
+```
 
-  这种方式的 class 绑定渲染结果和上面的一样
+最终结果渲染如下图：
 
-- class 绑定可以是一个返回对象的计算属性：
+![vue-class-8](./imgs/class-8.png)
 
-  ```vue
-  <template>
-    <button
-      class="w-button"
-      :class="classes"
-    >  
-    </button>
-  </template>
-  
-  <script>
-  const prefixClass = 'w-button-'
-  export default {
-    props: 
-      loading: {
-        type: Boolean,
-        default: false
+如果要在数组语法中根据条件切换不同的 class，可以使用三元表达式：
+
+```vue
+<template>
+  <div class="demo" :class="[isActive ? 'active' : '']" />
+</template>
+```
+
+此时，`active` class 是否存在取决于数据 property `isActive` 值的真假。此外，也可以在数组语法中使用字符串语法、对象语法，而且配合返回一个数组的计算属性使用是更强大的模式：
+
+```vue
+<template>
+  <button class="demo" :class="classList">按钮</button>
+</template>
+
+<script>
+const prefixClass = 'w-button-'
+
+export default {
+  name: 'WButton',
+  props: {
+    iconPosition: {
+      type: String,
+      validator (value) {
+        return oneof(value, ['left', 'right'])
       }
     },
-    computed: {
-      classes () {
-        return {
-          [`${prefixClass}loading`]: this.loading
-        }
-      }
+    loading: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    classList () {
+      const { iconPosition, loading } = this
+      return [
+        iconPosition && `${prefixClass}icon-${iconPosition}`,
+        { [`${prefixClass}loading`]: loading }
+      ]
     }
   }
-  </script>
-  ```
+}
+</script>
+```
 
+#### 用在组件上
 
-##### 数组语法
+当在自定义组件上使用 class 时（不管是否使用 `v-bind` 绑定），这些 class 会被添加到组件的根元素上。同时，这个根元素上已经存在的 class 不会被覆盖。比如，有如下自定义组件：
 
-- 可以把一个数组传给 `v-bind:class`，以应用一个 class 列表：
+```vue
+<template>
+  <div class="xxx">自定义组件</div>
+</template>
 
-  ```vue
-  <template>
-    <div class="test" :class="[ 'active', 'is-disabled' ]"></div>
-  </template>
-  ```
+<script>
+export default {
+  name: 'MyComponent'
+  // ...
+}
+</script>
+```
 
-  渲染为：
+在使用组件时，添加 class：
 
-  ```html
-  <div class="test active is-disabled"></div>
-  ```
+```vue
+<my-component class="xxx" :class="[{active: isActive}, 'yyy']" />
+```
 
-- 可以根据条件切换数组中的 class：
+如果 `isActive` 的值为真，那么结果渲染如下图：
 
-  ```vue
-  <template>
-    <button :class="[ type && `w-button-${type}`, isActive ? 'active' : '' ]"></button>
-  </template>
-  ```
+![vue-class-9](./imgs/class-9.png)
 
-  在上述代码中，只有在 `type` 为真值的情况下才添加 `w-button-${type}` 这个类名；同理，`active` 这个类名也是要在 `isActive` 为真值时才添加
-
-- 可以在数组中使用对象语法：
-
-  ```vue
-  <template>
-    <button :class="[{ 'is-loading': loading }]"></button>
-  </template>
-  ```
-
-##### 用在组件上
-
-- 当在自定义组件上使用 class 绑定时，这些 class 会被添加到该组件的根元素上面，而这个根元素上已经存在的 class 不会被覆盖。比如，声明如下组件：
-
-  ```vue
-  <template>
-    <div class="aaa bbb">
-      <p>vue bind class</p>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'myComponent'
-  }
-  </script>
-  ```
-
-  在使用这个自定义组件时添加一些 class：
-
-  ```vue
-  <my-component class="active"></my-component>
-  ```
-
-  HTML 最终渲染为：
-
-  ```html
-  <div class="aaa bbb active">
-    <p>vue bind class</p>
-  </div>
-  ```
-
-  对于自定义组件带数据绑定的 class 也同样适用：
-
-  ```vue
-  <my-component :class="[ isActive ? 'active': '' ]"></my-component>
-  ```
-
-  当 `isActive` 为真值的情况下，HTML渲染为：
-
-  ```html
-  <div class="aaa bbb active">
-    <p>vue bind class</p>
-  </div>
-  ```
-
-  
-
-
+### 绑定 Style
 
