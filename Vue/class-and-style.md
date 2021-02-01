@@ -1,6 +1,6 @@
 # Class 与 Style 绑定
 
-在使用 Vue 开发项目时，经常会有操作元素的 `class` 和 `style` 的需求，比如，开发 Tab 组件时通过切换元素的 `class` 展示被选中的样式，或者有时需要直接更改组件中元素的内联样式。
+在使用 Vue 开发项目时，经常会有操作元素 `class` 和 `style` 的需求，比如，开发 Tab 组件时通过切换元素的 `class` 展示被选中的样式，或者有时需要直接更改组件中元素的内联样式。
 
 > 因为 `class` 和 `style` 都是 HTML attribute，所以可以通过 `v-bind` 进行处理：只需要绑定的表达式计算出字符串结果即可。不过，字符串拼接麻烦且容易出错。因此，`v-bind` 在用于 `class` 和 `style` 时，Vue 做了专门的增强，表达式结果的类型除了字符串，还可以是对象和数组。
 
@@ -52,7 +52,7 @@ export default {
 
 ![vue-class-2](./imgs/class-2.png)
 
-此外，绑定的表达式也可以复杂一点：
+此外，绑定的表达式也可以复杂一点，只要表达式计算结果是字符串即可：
 
 ```vue
 <template>
@@ -63,7 +63,7 @@ export default {
 export default {
   props: {
     type: {
-			type: String,
+      type: String,
       default: 'primary'
     }
   }
@@ -97,7 +97,7 @@ export default {
 </template>
 ```
 
-在上述代码中，`active` class 是否存在取决于数据 property `isActive` 值的真假。比如，当 `isActive` 值为真时，渲染结果如下图：
+在上述代码中，`active` class 是否存在取决于数据 property `isActive` 值的真假。比如，当 `isActive` 值为真时，结果渲染如下图：
 
 ![vue-class-5](./imgs/class-5.png)
 
@@ -171,7 +171,7 @@ export default {
 
 ![vue-class-object-6](./imgs/class-6.png)
 
-在 `v-bind:class` 中也可以绑定一个返回对象的计算属性，这是一种更常用的模式：
+在 `v-bind:class` 中也可以绑定一个返回对象的计算属性，这是一种更常用且强大的模式：
 
 ```vue
 <template>
@@ -273,7 +273,7 @@ export default {
 
 #### 用在组件上
 
-当在自定义组件上使用 class 时（不管是否使用 `v-bind` 绑定），这些 class 会被添加到组件的根元素上。同时，这个根元素上已经存在的 class 不会被覆盖。比如，有如下自定义组件：
+**当在自定义组件上使用 class 时（不管是否使用 `v-bind` 绑定），这些 class 会被添加到组件的根元素上。同时，这个根元素上已经存在的 class 不会被覆盖**。比如，有如下自定义组件：
 
 ```vue
 <template>
@@ -300,3 +300,103 @@ export default {
 
 ### 绑定 Style
 
+#### 字符串语法
+
+`v-bind:style` 绑定的表达式计算结果可以是字符串，用以在元素上添加内联样式。同时，`v-bind:style` 可以和普通的 style attribute 共存，有如下模板：
+
+```vue
+<template>
+  <div style="background: yellowgreen" :style="styleString">绑定 Style</div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      // 字符串语法拼接麻烦且容易出错
+      styleString: 'color: red; font-size: 20px;'
+    }
+  }
+}
+</script>
+```
+
+结果渲染如下图：
+
+![vue-style-1](./imgs/style-1.png)
+
+#### 对象语法
+
+绑定 style 时，可以传给 `v-bind:style` 一个对象，用以添加内联样式。在这个对象中，CSS property 名可以使用驼峰式或者短横线分隔（用引号括起来）来命名，有如下模板：
+
+```vue
+<template>
+  <div style="color: red;" :style="{ fontSize: fontSize }">绑定 Style</div>
+  <!-- <div style="color: red;" :style="{ 'font-size': fontSize }">绑定 Style</div> -->
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      fontSize: '22px'
+    }
+  }
+}
+</script>
+```
+
+结果渲染如下图：
+
+![vue-style-2](./imgs/style-2.png)
+
+此外，对象不必内联到模板中，直接绑定一个样式对象是更好的选择，这会让模板更清晰：
+
+```vue
+<template>
+  <div style="color: red;" :style="styleObject">绑定 Style</div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      styleObject: {
+        fontSize: '22px'
+      }
+    }
+  }
+}
+</script>
+```
+
+同样的，配合使用一个返回对象的计算属性是更常用且强大的模式。
+
+#### 数组语法
+
+绑定 style 时，也可以传一个数组，**数组中可以包含多个样式对象**：
+
+```vue
+<template>
+  <div style="color: red;" :style="[baseStyle, spcialStyle]">绑定 Style</div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      baseStyle: {
+        fontSize: '24px'
+      },
+      spcialStyle: {
+        background: 'skyblue'
+      }
+    }
+  }
+}
+</script>
+```
+
+结果渲染如下图：
+
+![vue-style-3](./imgs/style-3.png)
