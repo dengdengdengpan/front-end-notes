@@ -1,8 +1,12 @@
 # Class 与 Style 绑定
 
-在使用 Vue 开发项目时，经常会有操作元素 `class` 和 `style` 的需求。比如，在开发组件时，经常使用计算属性来根据组件不同的 props 添加相应的 class，从而应用不同的样式。
+在使用 Vue 开发项目时，经常会有操作元素 `class` 和 `style` 的需求。比如，在开发组件时，经常会使用计算属性来根据组件不同的 props 添加相应的 class，从而应用不同的样式。
 
 > 因为 `class` 和 `style` 都是 HTML attribute，所以可以通过 `v-bind` 进行处理：只需要绑定的表达式计算出字符串结果即可。不过，字符串拼接麻烦且容易出错。因此，`v-bind` 在用于 `class` 和 `style` 时，Vue 做了专门的增强，表达式结果的类型除了字符串，还可以是对象和数组。
+
+### 概览
+
+![class-and-style](./imgs/class-and-style.png)
 
 ### 绑定 Class
 
