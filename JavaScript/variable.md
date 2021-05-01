@@ -64,7 +64,7 @@ let deviceStatusList;
 
 ##### 使用方式
 
-使用 `var` 关键字可以声明一个变量，并可选地将其初始化为一个值（及可选地初始化）：
+使用 `var` 关键字可以声明一个变量，并可选地将其初始化为一个值：
 
 ```javascript
 var name = 'lufei';
@@ -88,12 +88,12 @@ console.log(message); // undefined
 
 ```javascript
 var a = 10;
-var b = 20;
+// ...
 var a = 50;
 console.log(a); // 50
 ```
 
-如果需要定义多个变量，可以在一条语句中用逗号分隔每个变量：
+如果需要定义多个变量，可以在一条语句中用逗号分隔每个变量（及可选地初始化）：
 
 ```javascript
 var a,
@@ -102,7 +102,7 @@ var a,
     d = [1, 2, 3];
 ```
 
-##### 变量作用域
+##### 作用域
 
 **用 `var` 声明的变量的作用域是它当前的执行上下文**：
 
@@ -122,9 +122,9 @@ var a,
   ```javascript
   function test() {
     var a = 1; // 局部变量
-    console.log(a); // 1
+    console.log(a); 
   }
-  test();
+  test(); // 1
   console.log(a); // Uncaught ReferenceError: a is not defined
   ```
 
@@ -141,43 +141,63 @@ var a,
 
 ##### 变量提升
 
-使用 `var` 声明的变量可以在其被声明之前使用而不报错，就像是把它移动到了当前作用域的顶部一样，这种行为叫变量提升。比如：
+使用 `var` 声明的变量无论出现在作用域的什么地方，都将在代码被执行前**首先**进行处理，可以形象地将这个过程想象成变量会被"移动"到了各自作用域的最顶端，这个过程被称为**变量提升**。如下代码：
 
 ```javascript
 console.log(name); // undefined
 var name = 'lufei';
 ```
 
-以上代码之所以不会报错，是因为它们被执行时等价成下面代码：
+以上代码没有报错并在控制台打印出了 `undefined`，是因为它们被执行时等价成下面代码：
 
 ```javascript
-// 这里是当前作用域顶部
-var name; // 把 var 声明的变量提到当前作用域顶部
-console.log(name); // 此时还未赋值，所以保存了特殊值 undefined
+// 假设这里是当前作用域顶部
+var name; // 把 var 声明的变量移动到当前作用域顶部
+console.log(name); // 执行打印，但此时变量 name 还未进行赋值操作，所以保存的是特殊值 undefined
+name = 'lufei'; // 对变量 name 进行赋值操作
+```
+
+这样就产生了“变量提升”，但实际上变量在代码中的位置是不会被移动的，所以这里的“提升”并非字面意思。要理解“提升”需要一些背景知识：
+
+> JavaScript 作为一种即时编译型的编程语言，任何的 JavaScript 代码片段在执行前都要进行编译——大部分情况编译就发生在代码执行前的几微秒（甚至更短）的时间内。
+
+因此，**正确的思考思路是，`var` 声明的变量会在代码被执行前提前被编译器处理**。对于 `var name = 'lufei';` 这个语句，JavaScript 会将其看作两个部分：
+
+```javascript
+var name;
 name = 'lufei';
 ```
 
-这样就产生了“变量提升”，但实际上变量在代码中的位置是不会移动的，所以这里的“提升”并非字面意思。“提升”的原因在于 JavaScript 作为即时编译型的编程语言，为了使代码运行速度更快。在源代码被执行时，它会被编译成二进制的格式。就在这个编译阶段，由 `var` 声明的变量会被放入到内存中，从而能够在使用该变量时不报错，产生“变量提升”的效果。
+其中，第一部分是在**编译阶段**进行的；第二部分则会被留到原地等待**执行阶段**。即**只有声明本身会被提升，赋值操作或其它运行逻辑会留在原地**，这样就形成了“提升”的效果。
 
-在函数产生的作用域中，使用 `var` 声明的变量也会有“提升”到该函数作用域顶部的效果：
+另外值得注意的是，`var` 声明在每个作用域中都会进行提升操作。所以除了前面的全局作用域，在函数产生的作用域中也会对 `var` 声明进行提升：
 
 ```javascript
 function fn() {
-  name = 'lufei';
-  console.log(name); // lufei
-  var name;
+  console.log(name);
+  var name = 'lufei';
 }
 fn();
 ```
 
-同时，值得注意的是，**提升只影响变量声明，而不会影响其值的初始化**，比如：
+以上代码会被理解成下面的形式：
 
 ```javascript
-console.log(number); // undefined，如果提升影响到了值的初始化，那么这里应该是 100
-var number = 100;
-console.log(number); // 100
+function fn() {
+  var name; // 将 var 声明提升到当前函数作用域的最顶部
+  console.log(name); // 此时 name 还没有被赋值，所以保存了特殊值 undefined
+  name = 'lufei';
+}
+fn();
 ```
 
 #### let
 
-xx
+##### 使用方式
+
+使用 `let` 可以声明一个拥有**块级作用域**的变量，并可选地是否将其初始化为一个值：
+
+```javascript
+let age = 18;
+```
+
