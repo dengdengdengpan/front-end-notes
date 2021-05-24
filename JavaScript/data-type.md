@@ -5,15 +5,19 @@
 在 JavaScript 中，每一个值都有其对应的数据类型。目前 JavaScript 中共有 8 种数据类型，它们可以分为两个大类：**原始类型**、**复杂类型**：
 
 - 原始类型：
-  1.  **`Undefined`** 只有一个特殊值 `undefined`，表示未定义或不存在。
-  2.  **`Null`** 只有一个特殊值 `null` ，表示空值。
-  3.  **`Boolean`** 布尔类型，表示布尔值，它有两个值分别是：`true`、`false`。
-  4.  **`String`** 字符串类型，表示文本数据，比如 `'JavaScript'`。
-  5.  **`Number`** 数字类型，使用 64 位双精度浮点型来表示整数或浮点数，比如 `25`、`3.14`。
-  6.  **`BigInt`** 数字类型，可以表示任意精度格式的整数。
-  7.  **`Symbol`** 表示唯一的标识符。
+  
+  1. `Undefined` 只有一个特殊值 `undefined`，表示未定义或不存在。
+  
+  2. `Null` 只有一个特殊值 `null` ，表示空值。
+  3. `Boolean` 布尔类型，表示布尔值，它有两个值分别是：`true`、`false`。
+  4. `String` 字符串类型，表示文本数据，比如 `'JavaScript'`。
+  5. `Number` 数字类型，使用 64 位双精度浮点型来表示整数或浮点数，比如 `25`、`3.14`。
+  6. `BigInt` 数字类型，可以表示任意精度格式的整数。
+  7. `Symbol` 表示唯一的标识符。
+  
 - 复杂类型：
-  8.  **`Object`** 表示一组无序键值对的集合。
+  
+  8. `Object` 表示一组无序键值对的集合。
 
 ### typeof 操作符
 
@@ -235,9 +239,17 @@ if (a) {
 
 ### `String` 类型
 
-##### 定义及使用
+##### 拓展知识
 
-**`String` 类型用于文本数据，可以表示零个或多个 16 位 Unicode 字符序列**。字符串通常使用单引号（''）、双引号（"")、反引号（``）来标示，如下代码：
+我们都知道，在计算内部所有的信息都可以使用二进制来表示的，每个二进制位用 0 或 1表示。**比特**（Bit）是指二进制中的一位，是信息的最小单位。比如，二进制数 0101 就是 4 比特。
+
+**字节**（Byte）是计算机信息用于计量存储容量的计量单位，不区分数据类型。一个字节等于 8 比特（即 8 个二进制位）。
+
+**Unicode** 称为统一码，是一个**字符集**，它为每个字符定义来一个唯一的码点（二进制数），其表示方法为：`U+[16进制数]`。比如 `一` 的码点为 `U+4E00`。但在不同的系统平台中，Unicode 并没有规定如何这些二进制编码怎么存储，所以 Unicode 就有不同的实现方式，像 **UTF-8**、**UTF-16**、**UTF-32** 这些都是 Unicode 实现方式的一种。
+
+##### 字符串定义及使用
+
+**`String` 类型用于存储文本数据，可以表示零个或多个 16 位（两个 字节） Unicode 字符序列**。字符串通常使用单引号（''）、双引号（"")、反引号（``）来标示，如下代码：
 
 ```javascript
 let a = 'aaa';
@@ -268,7 +280,7 @@ let name = 'lufei"; // Uncaught SyntaxError: Invalid or unexpected token
 
 ##### 多行字符串
 
-有时候，代码中可能包含着很长的字符串，为了排版好看你想将这个长字符串分成多行写：
+有时候，代码中可能包含着很长的字符串，为了排版好看你想将这个长字符串分成多行写，比如：
 
 ```javascript
 let address = '广东省广州市
@@ -277,7 +289,7 @@ let address = '广东省广州市
 ';
 ```
 
-这个时候，控制台会出现报错信息 `Uncaught SyntaxError: Invalid or unexpected token`，报错是因为字符串只能写在一行内，分成多行写将会报错。
+但在你写完后，打开控制台会出现报错信息 `Uncaught SyntaxError: Invalid or unexpected token`，原因是因为字符串在单引号或双引号中只能写在一行内，分成多行写将会报错。
 
 不过，可以使用下面的方法达到字符串多行写的目的：
 
@@ -318,9 +330,9 @@ let address = '广东省广州市
   console.log(address); // 广东省广州市\n某某区某某路189号\n某某小区...\n
   ```
 
-##### 字符串长度和方括号获取字符
+##### 字符串长度和访问字符
 
-字符串可以通过 `length` 属性获取得到字符串的长度，比如：
+字符串可以通过 `length` 属性得到字符串的长度，比如：
 
 ```javascript
 '1234567'.length; // 7
@@ -346,7 +358,7 @@ lang['a']; // undefined
 
 ##### 字符串是不可更改的
 
-不同于类 C 语言，JavaScript **字符串是不可更改的**。这意味着字符串一旦被创建，就不能被修改，比如下面代码就表示字符串被创建后无法修改：
+不同于类 C 语言，JavaScript **字符串是不可更改的**。这意味着字符串一旦被创建，就不能被修改，比如下面代码就可以证明字符串被创建后是无法修改的：
 
 ```javascript
 let a = 'aaa';
@@ -391,7 +403,7 @@ console.log(address); // 广州市某某街道
 - `\xnn`：以十六进制编码 `nn` 表示的字符（`n` 是十六进制数字0~F），例如 `\x41` 等于 `'A'`
 - `\unnnn`：以十六进制编码 `nn` 表示的 Unicode 字符（`n` 是十六进制数字0~F），例如 `\u00A9` 等于 `'©'`
 
-以上这些转义字符可以出现在字符串的任意位置，并且会被作为**单个字符**解释：
+以上这些转义字符都可以出现在字符串中的任意位置，并且会被当作**单个字符**解释：
 
 ```javascript
 let a = '这个是版权符号\u00A9';
@@ -408,5 +420,142 @@ console.log(a); // aaa
 
 ##### 其它类型转换为字符串
 
+在 JavaScript 中，要想把其它类型的数据转换成字符串，可以使用以下方法：
+
+- 用 `+` 操作符给一个值加上空字符串 `''`  会得到该值的字符串等价物，比如：
+
+  ```javascript
+  let a;
+  a + ''; // 'undefined'
+  
+  let b = null;
+  b + ''; // 'null'
+  
+  let c = false;
+  d + ''; 'false'
+  
+  let d = 2.89;
+  c + ''; // '2.89'
+  
+  let e = 24n;
+  e + ''; // '24'，n 不是字符串的一部分
+  
+  let g = Symbol('foo');
+  g + ''; // symbol 原始值不能转换为字符串，会报错：Uncaught TypeError: Cannot convert a Symbol value to a string
+  
+  let personObj = {
+    name: 'lufei',
+    age: 19
+  };
+  personObj + ''; // '[object Object]'
+  
+  let list = [1, 3, 5];
+  list + ''; // '1, 3, 5'，数组会反回一个包含着用逗号分隔的每个数组元素的字符串
+  
+  function fn() {}
+  fn + ''; // 'function fn() {}'
+  ```
+
+- 除了 `undefined` 和 `null` 没有 `toString()` 方法，其它数据类型都可以使用该方法返回相应的字符串，比如：
+
+  ```javascript
+  let a = true;
+  a.toString(); // 'true'
+  
+  let b = 'xxx';
+  a.toString(); // 'xxx'，字符串类型也有 toString() 方法
+  
+  // 在 Number、BigInt 数据类型中，toString() 方法可以通过接收参数得到该数值不同进制的字符串
+  // 参数不在 2 到 36 之间则会抛出 RangeError 报错
+  let c = 123;
+  c.toString(); // '123'，默认是十进制
+  c.toString(2); // '1111011'
+  c.toString(8); // '173'
+  c.toString(16); // '7b'
+  let d = 79n;
+  d.toString(8); // '117'
+  d.toString(16); // '4f'
+  
+  let f = Symbol('foo');
+  f.toString(); // 'Symbol(foo)'
+  
+  let car = { price: 100 };
+  car.toString(); // '[object Object]'
+  
+  let list = [1, 3, 5];
+  list.toString(); // '1, 3, 5'
+  
+  function fn() {}
+  fn.toString(); // 'function fn() {}'
+  ```
+
+- `String()` 会不管什么类型的值，都会返回一个表示当前值的字符串。它的转换规则如下：
+
+  1. 如果值有 `toString()` 方法，则不加参数地调用该方法并返回结果。
+  2. 如果值是 `undefined`，则返回 `'undefined'`。
+  3. 如果值是 `null`，则返回 `'null'`。
+
 ##### 模版字面量
+
+模板字面量是允许嵌入表达式的字符串字面量，它使用反引号来标示字符串，并且具有以下特性：
+
+- 支持跨行定义字符串，输出后会保留反引号内的空格和换行符，如下代码：
+
+  ```javascript
+  let tel = `187
+  89
+  45
+  2...`;
+  console.log(tel); // '187\n89\n45\n2...'
+  
+  let test = `abc
+              def`;
+  console.log(test); // 'abc\n            def'
+  test.length; // 19
+  ```
+
+- 支持使用 `${}` 进行插值，比如：
+
+  ```javascript
+  // 以前的字符串插值使用 + 操作符拼接实现
+  let year = 2021;
+  let month = 5;
+  let result = year + '-' + month;
+  console.log(result); // '2021-5'
+  
+  // 现在使用模板字面量
+  let resultByTemplate = `${year}-${month}`;
+  console.log(resultByTemplate); // '2021-5'
+  ```
+
+  所有插入的值都会使用 `toString()` 方法强制转换为字符串，比如：
+
+  ```javascript
+  let person = { name: 'lufei' };
+  let test = `${person}`;
+  console.log(test); // '[object Object]'
+  ```
+
+- **标签函数**
+
+  标签函数的形如是 `` tag`${a}` `` 这种形式的函数，可以通过标签函数自定义插值行为。先来看看标签函数的参数是怎样的，如下代码：
+
+  ```javascript
+  function tag() {
+    console.log(arguments);
+  }
+  let year = '2021';
+  let month = '5';
+  tag`${year}-${month}`;
+  ```
+
+  调用 `tag` 函数会在控制台打印出一些参数，如下图：
+
+  ![tag-function](./imgs/tag-function.png)
+
+  其中，第一个参数是以 `${}` 分隔后的数组，而剩下的参数分别是插值表达式的结果。利用插值，我们可以通过插值表达式结果的不同拼接出不同字符串并返回，如下代码：
+
+  
+
+- **原始字符串**
 
