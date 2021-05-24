@@ -5,18 +5,14 @@
 在 JavaScript 中，每一个值都有其对应的数据类型。目前 JavaScript 中共有 8 种数据类型，它们可以分为两个大类：**原始类型**、**复杂类型**：
 
 - 原始类型：
-  
   1. `Undefined` 只有一个特殊值 `undefined`，表示未定义或不存在。
-  
   2. `Null` 只有一个特殊值 `null` ，表示空值。
   3. `Boolean` 布尔类型，表示布尔值，它有两个值分别是：`true`、`false`。
   4. `String` 字符串类型，表示文本数据，比如 `'JavaScript'`。
   5. `Number` 数字类型，使用 64 位双精度浮点型来表示整数或浮点数，比如 `25`、`3.14`。
   6. `BigInt` 数字类型，可以表示任意精度格式的整数。
   7. `Symbol` 表示唯一的标识符。
-  
 - 复杂类型：
-  
   8. `Object` 表示一组无序键值对的集合。
 
 ### typeof 操作符
@@ -553,9 +549,48 @@ console.log(a); // aaa
 
   ![tag-function](./imgs/tag-function.png)
 
-  其中，第一个参数是以 `${}` 分隔后的数组，而剩下的参数分别是插值表达式的结果。利用插值，我们可以通过插值表达式结果的不同拼接出不同字符串并返回，如下代码：
+  其中，第一个参数是以 `${}` 分隔后的数组，而剩下的参数分别是插值表达式的结果。利用这些参数，我们可以通过插值表达式结果的不同拼接出不同字符串并返回，如下示例：
 
-  
+  ```javascript
+  function caculateScore(stringList, score) {
+    let description = stringList[1];
+    return score > 60 ? '及格' : '没有及格';
+  }
+  let score1 = 78;
+  let result1 = caculateScore`${score1}这次考试的情况：`;
+  console.log(result1); // '及格'
+  let score2 = 42;
+  let result2 = caculateScore`${score2}这次考试的情况：`;
+  console.log(result2); // '没有及格'
+  ```
+
+  在 [styled-components](https://github.com/styled-components/styled-components) 中就使用了标签函数这种语法：
+
+  ```javascript
+  const Title = styled.h1`
+    font-size: 1.5em;
+    text-align: center;
+    color: palevioletred;
+  `;
+  ```
 
 - **原始字符串**
 
+  在标签函数的第一个参数中，存在一个特殊的属性 `raw` ，我们可以通过它来访问模板字面量中的原始字符串，而不是被转换后的字符，如下：
+  
+  ```javascript
+  function tag(stringList) {
+    console.log(stringList.raw[0]);
+  }
+  
+  tag`第一行\n第二行`; // '第一行\n第二行'
+  ```
+  
+  另外，也可以通过 `String.raw` 来获取一个模板字符串的原始字符串，比如：
+  
+  ```javascript
+  // \u00A9 是版权符号
+  console.log(String.raw`\u00A9`); // \u00A9
+  ```
+  
+  

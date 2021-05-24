@@ -24,7 +24,7 @@ a = true; // 变量 a 的数据类型从 Number 改变为 Boolean
 
 ### 变量命名
 
-变量作为标识符，其命名需要遵守一定的规则：
+变量作为标识符之一，其命名需要遵守一定的规则：
 
 - 变量名只能包含字母、数字、下划线（_）或美元符号（$），且不能以数字开头。
 - 关键字、保留字、`true`、`false`、`null` 不能用作变量名。
@@ -37,7 +37,8 @@ a = true; // 变量 a 的数据类型从 Number 改变为 Boolean
 let name;
 let _this;
 let $attr;
-let 临时变量; // 合法，但不推荐
+let 临时变量; // 中文变量名合法，但不推荐
+let Früh; // 德文变量名合法，但不推荐
 let имя；// 合法，但不推荐
 
 // 不合法的变量命名
@@ -58,7 +59,7 @@ let deviceStatusList;
 
 ### 声明变量
 
-要想使用变量，第一步要做的就是创建它——更准确地说，是声明一个变量。在 JavaScript 中，**声明变量的方式有三种：分别是使用 `var`、`let`、`const` 后接变量名的方式**。
+在 JavaScript 中使用变量，首先需要创建它——即声明一个变量，而**声明变量的方式有三种：分别是使用 `var`、`let`、`const` 后接变量名的方式**。
 
 #### var
 
@@ -70,14 +71,14 @@ let deviceStatusList;
 var name = 'lufei';
 ```
 
-上面代码声明了一个名为 `name` 的变量，并且初始化赋值了字符串值 `lufei`，它的实际步骤是下面这样的：
+上述代码声明了一个名为 `name` 的变量，并且初始化时赋值了字符串值 `lufei`，它的实际步骤是下面这样的：
 
 ```javascript
 var name; // var 关键字告诉 JS 引擎，要声明一个变量 name
 name = 'lufei'; // 通过赋值操作符 = ，变量 name 就保存了将字符串值 lufei
 ```
 
-如果只是声明变量而没有赋值，则变量会保存一个特殊值 `undefined`。
+如果只是声明变量而没有初始化，则变量会保存一个特殊值 `undefined`。
 
 ```javascript
 var message;
@@ -104,7 +105,7 @@ var a,
 
 ##### 作用域
 
-**用 `var` 声明的变量的作用域是它当前的执行上下文**：
+**使用 `var` 声明的变量的作用域是它当前的执行上下文**：
 
 - 在函数外声明的变量会成为全局变量（会成为全局对象的一个属性），全局变量在当前执行环境下都能被访问。
 
@@ -128,15 +129,27 @@ var a,
   console.log(a); // Uncaught ReferenceError: a is not defined
   ```
 
-  不过，如果在函数内声明变量时省略 `var` 关键字，在执行赋值操作后，该变量会被隐式地创建为全局变量。
+  不过，如果在函数内声明变量时省略 `var` 关键字，并且函数内也无该变量，那么该变量会被隐式地创建为全局变量。
 
   ```javascript
+  // 函数内无该变量
   function test() {
     c = 3;
   }
   test();
   console.log(c); // 3
   console.log(window.c); // 3
+  
+  // 函数内有该变量
+  function foo() {
+    var d;
+    function bar() {
+      d = 2; // d 是外边 foo 函数里的局部变量 d
+    }
+    bar();
+  }
+  foo();
+  console.log(window.d); // undefined
   ```
 
 ##### 变量提升
@@ -198,6 +211,64 @@ fn();
 使用 `let` 可以声明一个拥有**块级作用域**的变量，并可选地是否将其初始化为一个值：
 
 ```javascript
-let age = 18;
+let name;
 ```
+
+上述代码只声明了变量 `name` 没有进行初始化，则变量 `name` 会保存一个特殊值 `undefined`。如果要使用 `let` 声明多个变量，使用逗号分隔（并可选是否进行初始化）：
+
+```javascript
+let name = 'lufei',
+    age = 18,
+    school,
+    gender = 'male';
+```
+
+##### 不可重复声明
+
+`let` 在一个作用域中重复声明同一个变量会引起 `SyntaxError` 报错：
+
+```javascript
+var name = 'lufei';
+let name = 'test'; // Uncaught SyntaxError: Identifier 'name' has already been declared
+
+let age = 18;
+let age = 22; // Uncaught SyntaxError: Identifier 'age' has already been declared
+
+let x = 1;
+switch(x) {
+  case 0:
+    let foo;
+    break;
+  case 1:
+    let foo; // Uncaught SyntaxError: Identifier 'foo' has already been declared
+    break;
+  default:
+    let bar;
+}
+```
+
+##### 作用域规则
+
+**`let` 声明的变量的作用域在离其最近的花括号中，并且只能在当前块或子块中可用**，如下代码：
+
+```javascript
+function test() {
+  let a = 1;
+  {
+    let a = 6; // 这个块中的变量 a 和在外边的变量 a 是两个不同的变量
+    console.log(a); // 6
+  }
+  console.log(a); // 1
+}
+```
+
+##### 没有变量提升
+
+使用 `let` 声明的变量不会有提升，所以要先声明后使用，否则会报错：
+
+```javascript
+
+```
+
+
 
