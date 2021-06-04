@@ -187,7 +187,62 @@ ES 6 对字符串有了更多更强的支持，有以下几方面：
 
 - 新增几个可以处理四字节码点字符的函数：
 
-  - `String.prototype.codePointAt()`
+  - `String.prototype.codePointAt()` 返回字符串给定位置字符的码点（十进制）：
+
+    ```javascript
+    let emoji = '😂'; // JavaScript 将 emoji 视作两个字符 U+D83D U+DE02
+    console.log(emoji.codePointAt(0)); // 128514，正确识别字符 😂 并返回码点的十进制
+    console.log(emoji.codePointAt(1)); // 56834，返回 U+DE02 码点的十进制
+    
+    console.log(emoji.charCodeAt(0)); // 55357，无法识别成四个字节表示的字符
+    console.log(emoji.charCodeAt(1)); // 56834
+    ```
+
+  - `String.fromCodePoint()` 从 Unicode 码点返回对应字符：
+
+    ```javascript
+    // 对于 😂
+    console.log(String.fromCharCode(0x1F602)); // 
+    console.log(String.fromCodePoint(0x1F602)); // 😂
+    ```
+
+  - `String.prototype.at()` 返回给定位置的字符串（实现特性，目前还不支持）。
+
+- ES6 提供 u 修饰符，对正则表达式表示四个字节码点提供了支持：
+
+  ```javascript
+  let emoji = '😂';
+  console.log(/^.$/.test(emoji)); // false
+  console.log(/^.$/u.test(emoji)); // true
+  ```
+  
+- 提供 `normalize()` 方法将字符串按照指定的一种 Unicode 正规形式进行正规化。有些字符由字母和语调符号组成，比如 `Ǒ`，这时 Unicode 提供了两种方法来表示。一种是直接提供带重音符号的字符，比如`Ǒ`（`\u01D1`）。另一种是提供合成符号，即字母与语调符号的合成，两个字符合成一个字符，比如将 `O`（`\u004F`）和  `ˇ`（`\u030C`）合成 `Ǒ`（\u004F\u030C）：
+
+  ```javascript
+  // 直接字符
+  console.log('\u01D1'); // Ǒ
+  
+  // 合成字符
+  console.log('\u004F\u030C'); // Ǒ
+  ```
+  
+  这两种字符表示方法理应等价，但是 JavaScript 却不能识别：
+  
+  ```javascript
+  console.log('\u01D1'==='\u004F\u030C' ); // false
+  ```
+  
+  在 ES6 中提供 `normalize()` 方法解决这个问题：
+  
+  ```javascript
+  console.log('\u01D1'.normalize() === '\u004F\u030C'.normalize()); // true
+  ```
+  
+  
+  
+    
+  
+    
 
 
 
