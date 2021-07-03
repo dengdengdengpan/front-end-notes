@@ -1,6 +1,6 @@
 # 理解 Vue 不同构建版本
 
-从 Vue 文档的安装章节中，可以知道实际上 Vue 的构建版本可以划分为：**完整版**和**运行时版**。在结合例子理解这两个版本的不同之前，有以下术语解释：
+在 Vue 文档的安装章节中将 Vue 的构建版本大致划分为：**完整版**和**运行时版**，相应的术语解释如下：
 
 > 完整版：同时包含编译器和运行时的版本。
 >
@@ -8,83 +8,97 @@
 >
 > 运行时：用来创建 Vue 示例、渲染并处理虚拟 DOM 等的代码。基本上就是除去编译器的其它一切。
 
+接下来通过实例来看看二者有什么不同。
+
 ### 制作 +1 按钮
 
 #### 使用完整版
 
-在完整版中，使用模板语法得到视图，代码如下：
+在完整版中，可以使用模板语法得到视图：
 
 ```html
-<div id="app">
-  {{ n }}
-  <button @click="addOne">+1</button>
-</div>
-<!-- 引入完整版的 Vue -->
-<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
-<script>
-  new Vue({
-    el: '#app',
-    data: {
-      n: 0
-    },
-    methods: {
-      addOne() {
-        this.n += 1
-      }
-    }
-  })
-</script>
+<html>
+  <body>
+    <div id="app">
+      {{ n }}
+      <button @click="addOne">+1</button>
+    </div>
+    <!-- 引入完整版的 Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <script>
+      new Vue({
+        el: '#app',
+        data: {
+          n: 0
+        },
+        methods: {
+         addOne() {
+           this.n += 1
+         }
+        }
+      })
+    </script>
+  </body>
+</html>
 ```
 
-此时，在页面中点击 `+1` 按钮时，初始值 0 会变为 1，实现了 `+1` 按钮的功能。
+此时，在页面中点击 `+1` 按钮，初始值 0 将会变为 1，实现了 `+1` 按钮的功能。
 
 #### 使用运行时版
 
-将上面代码中引入完整版 Vue 的链接更换为运行时版，如下代码：
+将引入完整版的 Vue更换为运行时版：
 
 ```html
 <!-- 引入运行时版的 Vue -->
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.runtime.js"></script>
 ```
 
- 但这时页面控制台中会出现如下报错信息：
+ 在刷新页面后，控制台中会出现如下报错信息：
 
 ![运行时版报错](./imgs/vue-runtime-error.jpg)
 
-以上报错信息表示当前正在使用的是没有模板编译器的只包含运行时的 Vue 版本，解决办法：使用 `render` 函数或者使用完整版。那么接下来使用 `render` 函数解决报错：
+运行时版的 Vue 由于没有模板编译器，所以不支持使用模板语法的方式来得到视图，解决办法是要么使用 `render` 函数，要么使用完整版的 Vue。下面试着使用 `render` 函数来解决报错：
 
 ```html
-<div id="app"></div>
-<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.runtime.js"></script>
-<script>
-  new Vue({
-    el: '#app',
-    data: {
-      n: 0
-    },
-    methods: {
-      addOne() {
-        this.n += 1
-      }
-    },
-    render(h) {
-      return h('div', [this.n, h('button', { on:{ click: this.addOne } }, '+1')])
-    }
-  })
-</script>
+<html>
+  <body>
+    <div id="app"></div>
+    <!-- 运行时版的 Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.runtime.js"></script>
+    <script>
+      new Vue({
+        el: '#app',
+        data: {
+          n: 0
+        },
+        methods: {
+          addOne() {
+            this.n += 1
+          }
+        },
+        // render 函数
+        render(h) {
+          return h('div', [this.n, h('button', { on: { click: this.addOne }}, '+1')])
+        }
+      })
+    </script>
+  </body>
+</html>
 ```
 
-在运行时版本的 Vue 中，并没有使用模板语法来构建视图，同时 `render` 函数的写法也没有直接使用模板语法那么简洁明了，那为什么 Vue 还有运行时版呢？原因在于：
-
-> 运行时版本相比完整版体积要小大约 30%
-
-完整版体积大的部分就是编译器，编译器要把模板字符串编译称为 JS 渲染函数，那么它就比较复杂，从而导致体积较大。比如，构建完成后，假设完整版的体积 100kb，那么运行时版的体积大约是 70kb，相当于完整版比运行时版体积大了 40% 左右，所以应该尽可能地使用运行时版。
+运行上述代码同样也实现了 `+1` 按钮的功能。
 
 ### 完整版 vs 运行时版
 
-完整版和运行时版的区别在于**是否需要编译模板**。当需要编译模板时则必须使用完整版，如下：
+通过在开发 `+1` 按钮的过程中对两个 Vue 构建版本的使用，可以发现：模板语法相较于 `render` 函数更加直观易理解。那是否在开发时都使用完整版呢？答案是否定的，大多数情况下都是使用运行时版。比如，@vue/cli 创建的项目默认使用运行时版，原因在于：
 
-- 使用 `template` 选项
+> 因为运行时版本相比完整版体积要小大约 30%，所以应该尽可能使用这个版本。
+
+完整版比运行时版体积大的部分就是编译器，编译器需要把模板字符串编译成为 JavaScript 渲染函数，所以编译器会比较复杂，进而导致体积较大。比如，在项目构建完成后，假设完整版的体积 100kb，那么运行时版的体积大约是 70kb，相当于完整版比运行时版体积大了 40% 左右，所以应尽可能地使用运行时版。
+
+完整版和运行时版的区别在于**是否需要编译模板**，当需要编译模板时则必须使用完整版：
+
+- 使用 `template` 选项。
 
   ```javascript
   new Vue({
@@ -93,25 +107,30 @@
   })
   ```
 
-- 挂载到元素上并使用 DOM 内部的 HTML 作为模板
+- 挂载到元素上并使用 DOM 内部的 HTML 作为模板。
 
   ```html
   <div id="app">
-    <h1>hellow Vue</h1>
+    <h1>hellow Vue.js</h1>
   </div>
+  <script>
+    new Vue({
+      el: '#app'
+    })
+  </script>
   ```
 
 ### 最佳实践
 
-总是使用 `vue-loader` ，思路：
+总是使用使用运行时版，并配合着 `vue-loader` 和文件扩展名为 `.vue` 的单文件组件使用：
 
-- 保证用户体验，用户下载的 JS 体积更小，但是只支持 `render` 函数
+- 保证用户体验，要使用户下载的 JavaScript 体积更小，就需要使用 `render` 函数。
 
-- 保证开发体验，开发者直接在 `*.vue` 单文件组件中进行开发，而不用写 `render` 函数
+- 保证开发体验，开发者可以使用模板语法，所以在单文件组件中进行开发。
 
-- 构建时，`vue-loader` 会将 `*.vue` 文件内部的模板预编译成 JS 的渲染函数
+- 在构建时，通过使用 `vue-loader` 将 `*.vue` 文件内部的模板预编译成 JavaScript 渲染函数。
 
-比如，在使用 @vue/cli 创建的项目中，有如下 `App.vue` 单文件组件：
+比如，@vue/cli 创建的项目中便是这样实践地，`App.vue` 开发时使用模板语法：
 
 ```vue
 <template>
@@ -144,12 +163,10 @@ export default {
 </style>
 ```
 
-在 `main.js` 中执行 `console.log(App)` 会在控制台得到如下对象：
+然后在 `main.js` 中添加 `console.log(App)` ，在构建时会在控制台得到如下对象：
 
   ![App](./imgs/app-vue.png)
 
-将该对象的 `render` 打印出来：
+将该对象的 `render` 方法打印出来便会得到 `App.vue `的 JavaScript 渲染函数：
 
 ![render-function](./imgs/render-function.png)
-
-这便是使用 `vue-loader` 将 `App.vue` 编译为 JS 渲染函数的过程
