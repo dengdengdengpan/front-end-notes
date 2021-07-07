@@ -167,6 +167,6 @@ export default {
 
   ![App](./imgs/app-vue.png)
 
-将该对象的 `render` 方法打印出来便会得到 `App.vue `的 JavaScript 渲染函数：
+将该对象的 `render` 方法打印出来便会得到 `App.vue` 的 JavaScript 渲染函数：
 
 ![render-function](./imgs/render-function.png)
