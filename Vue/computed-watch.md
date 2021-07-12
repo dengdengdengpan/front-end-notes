@@ -2,21 +2,22 @@
 
 ### computed
 
-**`computed` 是计算属性，它会基于所依赖的响应式 property 动态显示最新的计算结果；计算属性的结果会被缓存，只有其依赖的响应式 property 有变化才会重新计算**。尽管计算属性的写法在形式上是方法，但它最终会被混入到 Vue 实例中当作 property 使用，所有 getter 和 setter 的 this 上下文自动地绑定为 Vue 实例，用法示例如下：
+**`computed` 是计算属性，它会基于所依赖的响应式 property 动态显示最新的计算结果；计算属性的结果会被缓存，只有其依赖的响应式 property 有变化才会重新计算**。尽管计算属性的写法在形式上是方法，但它最终会被混入到 Vue 实例中当作 property 使用，同时所有 getter 和 setter 的 this 上下文自动地绑定为 Vue 实例，用法如下：
 
 ```javascript
 const vm = new Vue({
+  // ...
   data: {
     n: 1
   },
   computed: {
     // 用法一：仅读取，计算属性的 getter
-    nDouble () {
+    double () {
       // this 指向当前实例 vm
       return this.n * 2
     },
     // 用法二：读取和设置，计算属性的 getter 和 setter
-    nPlus: {
+    plus: {
       // getter
       get () {
         return this.n + 1
@@ -29,18 +30,23 @@ const vm = new Vue({
     }
   }
 })
-console.log(vm.nDouble) // 2
-vm.nPlus = 5 
+console.log(vm.double) // 2
+vm.plus = 5 
 console.log(vm.n) // n => 4
-console.log(vm.nPlus) // 5
-console.log(vm.nDouble) // 8
+console.log(vm.plus) // 5
+console.log(vm.double) // 8
 ```
 
-`computed` 常用的使用场景——要使用的属性会受到数据对象中某些 property 的变化的影响：
+`computed` 的使用场景：当需要的值会根据数据对象中 property 的变化而变化时，比如，以下两个示例：
 
-#### 展示用户信息
+##### 展示用户信息
 
-页面某个地方需要按照昵称、手机、邮件的顺序展示用户信息，如果昵称不存在就展示手机；如果昵称和手机都不存在就展示邮件。同时，有很多地方都需要像这样展示用户信息：
+在开发业务时，页面上某个地方需要按照昵称、手机、邮件的顺序展示用户信息，并且有以下规则：
+
+- 昵称不存在就展示手机。
+- 昵称和手机都不存在就展示邮件。
+
+同时，这个用户信息展示模块会用到很多页面。我们可以使用双大括号插值的方法很快地完成业务需求：
 
 ```vue
 <template>
@@ -63,7 +69,11 @@ export default {
 </script>
 ```
 
-通过上面代码就可以实现按照既定顺序展示用户信息的需求，但是有天如果业务变更，用户信息的展示顺序变为手机、昵称、邮件，那么很多地方都需要修改代码来满足需求变更。这种场景下，可以使用 `computed`：
+结果如下：
+
+![用户信息展示](./imgs/computed-1.png)
+
+但如果哪天业务变更，需要将用户信息的展示顺序变更为：手机、昵称、邮件，那么我们页面中包含有用户信息模块的代码都需要更改，这样极为不方便。同时，双大括号内那么长一串表达式也不是简单的声明式逻辑，修改业务时也需要看一会才清楚之前的逻辑，基于上述种种不便，我们可以使用 `computed` 来进行优化：
 
 ```html
 <template>
@@ -76,7 +86,8 @@ export default {
   // ...
   computed: {
     displayUser () {
-      const { user: { phone, nickname, email } } = this
+      const { user: { phone, nickname, email }} = this
+      // 将用户信息展示顺序变更为：手机、昵称、邮件
       return phone || nickname || email
     }
   }
@@ -84,18 +95,21 @@ export default {
 </script>
 ```
 
-这里声明了一个计算属性 `displayUser`，可以像使用普通 property 一样在模板中使用该计算属性。在使用它时，Vue 知道计算属性 `displayUser` 依赖于 `user` property，当 `user` property 发生改变时（比如，用户信息改变、用户信息的展示顺序改变），所有在模板中使用计算属性 `displayUser` 的地方都会自动更新。
+之前双大括号内逻辑不够简洁的长长的表达式被更换为一个计算属性 `displayUser`，这样模板内的逻辑看起来一目了然。
 
-如果页面还有一个修改手机号的按钮，当点击它时就重新设置用户手机号，可以将上面的计算属性改写为：
+我们可以像使用普通 data property 一样在模板中使用计算属性，Vue 知道计算属性 `displayUser` 依赖于 `user` property，当 `user` property 发生改变时（比如，用户信息改变、用户信息的展示顺序改变等），所有在模板中使用了计算属性 `displayUser` 的地方都会自动更新。
+
+如果页面还有一个修改手机号的按钮，当点击它时就重新设置用户手机号，那么计算属性可以改写为：
 
 ```vue
 <script>
 export default {
   // ...
   computed: {
+    // 进行设置和读取
     displayUser: {
       get () {
-        const { user: { phone, nickname, email } } = this
+        const { user: { phone, nickname, email }} = this
         return phone || nickname || email
       },
       set (value) {
@@ -112,11 +126,11 @@ export default {
 </script>
 ```
 
-这样在点击修改手机按钮时，计算属性 `displayUser` 的 `setter` 会被调用，进而更新 `user.phone` property 的值。           
+这样在点击修改手机号按钮时，计算属性 `displayUser` 的 `setter` 会被调用，进而更新 `user.phone` property 的值。
 
-#### 根据性别切换用户列表
+##### 根据性别切换用户列表
 
-在页面中有一个展示用户昵称和性别的列表，代码如下：
+在页面中有一个展示用户昵称和性别的列表：
 
 ```vue
 <template>
@@ -156,13 +170,17 @@ export default {
 </script>
 ```
 
-效果如下图所示：
+结果如下：
 
-![用户列表](./imgs/computed-1.png)
+![用户列表](./imgs/computed-2.png)
 
-要实现的需求是，当点击全部按钮时，展示所有的用户；当点击男按钮时，展示性别为男的用户；当点击女按钮时，展示性别为女的用户。
+要实现的需求是，根据点击按钮的不同切换用户列表，具体规则如下：
 
-实现思路，页面用户列表的数据源更改为计算属性 `displayUsers`，它根据 `gender` property 的变化展示不同性别的用户：
+- 点击全部按钮时，展示所有的用户。
+- 点击男按钮时，展示性别为男的用户。
+- 点击女按钮时，展示性别为女的用户。
+
+实现思路，用户列表的数据源改为计算属性 `displayUsers`，它会根据 `gender` property 值的变化展示对应用户：
 
 ```vue
 <template>
@@ -175,8 +193,8 @@ export default {
     </div>
     <ul>
       <!-- 页面用户列表的数据源改为计算属性 displayUsers -->
-      <li v-for="u in displayUsers" :key="u.id">
-        {{ u.nickname }} - {{ u.gender }}
+      <li v-for="user in displayUsers" :key="user.id">
+        {{ user.nickname }} - {{ user.gender }}
       </li>
     </ul>
   </div>
@@ -210,13 +228,19 @@ export default {
 
 最终实现效果：
 
-![使用计算属性实现切换用户列表](./imgs/computed-2.gif)
+![使用计算属性实现切换用户列表](./imgs/computed-3.gif)
 
-通过上面两个场景示例对计算属性的使用有了更多认识——**计算属性可以让模板更简洁、逻辑更清晰、代码更易于维护**。
+通过上述两个示例对计算属性的使用有了更多认识——**计算属性可以让模板更简洁、逻辑更清晰、代码更易于维护**。
 
-#### 计算属性 vs 方法
+##### computed vs methods
 
-在根据性别切换用户列表这个场景示例中，也可以使用方法来达到相同效果。实现思路，首先用户列表的数据源 `users` property 不能被修改，所以新增一个 `displayUsers` property，并在 `created` 钩子中将 `users` 赋值给 `displayUsers`，同时添加一个根据性别展示不同用户的方法 `showUsers`：
+在根据性别切换用户列表的示例中，我们也可以使用 methods 来完成同样的需求，实现思路如下：
+
+- 首先用户列表的数据源 `users` property 不能被修改，所以新增一个 `displayUsers` property。
+- 在 `created` 钩子中将 `users` 赋值给 `displayUsers`。
+- 添加一个根据性别展示不同用户的方法 `showUsers`。
+
+完整代码如下：
 
 ```vue
 <script>
@@ -248,17 +272,17 @@ export default {
 </script>
 ```
 
-使用方法和计算属性都能实现需求，但不同的是**计算属性可以基于它们的响应式依赖进行缓存，只有在相关依赖发生改变时才会重新计算；而调用方法则总是会重新执行函数**。
+通过示例我们可以知道使用方法和计算属性都能实现需求，但不同的是**计算属性可以基于它们的响应式依赖进行缓存，并只有在相关依赖发生改变时才会重新计算；而调用方法则总是会重新执行函数**。
 
-- 通过方法实现时，在 `showUsers` 方法中添加一个 log：
+- 使用方法实现时，在 `showUsers` 方法中添加一个 log：
 
   ```vue
   <script>
   export default {
     methods: {
       showUsers (gender) {
-        console.log('showUsers 方法被调用了')
         // ...
+        console.log(`displayUsers 计算了 ${genderHash[gender]} 一次`)
       }
     }
   }
@@ -269,9 +293,9 @@ export default {
 
   ![methods-log](./imgs/methods-log.gif)
 
-  **方法总是会重新执行，没有缓存结果**。无论是点击不同按钮还是连续点击相同按钮，`showUsers` 方法都会被重新调用。
+  无论是点击不同按钮还是连续点击同一按钮，`showUsers` 方法都会被重新调用，这表明**方法总是会重新执行，不会缓存结果**。
 
-- 通过计算属性实现时，在计算属性 `displayUsers` 中添加一个 log：
+- 使用计算属性实现时，在计算属性 `displayUsers` 中添加一个 log：
 
   ```vue
   <script>
@@ -281,7 +305,6 @@ export default {
       displayUsers () {
         // ...
         console.log(`displayUsers 计算了 ${genderHash[gender]} 一次`)
-        // ...
       }
     }
   }
@@ -289,16 +312,16 @@ export default {
   ```
   
   当点击按钮时：
-  
+
 ![computed-log](./imgs/computed-log.gif)
-  
-**计算属性 `displayUsers` 会根据依赖的 `gender` property 进行计算，并且会缓存计算结果**。当点击不同按钮时，`gender` 发生了改变，`displayUsers` 会马上重新求值；当连续点击相同按钮时，`gender` 没有发生改变，`displayUsers` 会立即返回之前的计算结果，而不会重新求值。
-  
-需要缓存的好处在于，如果有一个场景需要进行大量计算，页面开销性能较大，使用计算属性则可以利用缓存减少页面开销；使用方法会每次都重新计算，可能会影响用户体验。
+
+当点击不同按钮时，由于 `gender` 发生了改变，`displayUsers` 会马上求值；但当连续点击同一按钮时，`gender` 没有发生改变，`displayUsers` 会立即返回之前的计算结果，而不会重新求值。这表明**计算属性 `displayUsers` 会根据其依赖的 `gender` property 进行计算，并且会缓存计算结果**。
+
+缓存的好处在于：当有场景需要进行大量计算导致页面性能开销较大时，使用计算属性可以利用缓存特性减少页面开销；但使用方法则会每次都重新执行计算，这样可能会影响用户体验。
 
 ### watch
 
-**`watch` 是侦听器，可以通过 `watch` 观察数据对象中 property 值的变化进而执行一些操作，`watch` 是一个异步的过程**。`watch` 的用法是一个对象，键是需要观察的表达式，值是对应的回调函数，其中值的表现形式可以是函数、方法名、包含选项的对象、包含回调的数组：
+**`watch` 是侦听器，可以通过 `watch` 观察数据对象中 property 值发生变化时执行一些操作，`watch` 是一个异步的过程**。`watch` 的用法是一个对象，键是需要观察的表达式，值是对应的回调函数，其中值的表现形式可以是函数、方法名、包含选项的对象、包含回调的数组：
 
 ```javascript
 new Vue({
@@ -352,7 +375,7 @@ new Vue({
 
 值得注意的是，**不应在 `watch` 中使用箭头函数**。
 
-#### 何谓数据变化
+##### 何谓数据变化
 
 `watch` 会在它观察的 property 的值发生变化时作出响应，接下来了解一下 property 值的变化：
 
