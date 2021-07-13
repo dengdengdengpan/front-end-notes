@@ -340,22 +340,22 @@ new Vue({
     }
   },
   watch: {
-    //第一种，值为函数
+    // 第一种，值为函数
     a (newValue, oldValue) {
       console.log(`from: ${oldValue}, to: ${newValue}`)
     },
-    // 第二种，值为方法名
+    // 第二种，值为 methods 中的方法
     b: 'methodName',
     // 第三种，值为包含选项的对象，选项有：deep 和 immediate，回调函数是 handler
     c: {
       handler (newValue, oldValue) {},
-      // deep: true 表示该回调会在被监听的对象 c 的属性改变时被调用，不论属性被嵌套多深
+      // deep: true 表示被监听的对象 c 只要有属性发生改变时都会调用 handler 回调，不管该属性嵌套多深
       deep: true
     },
     d: {
       handler: 'methodName',
-      // watch 中一开始时 handler 回调并不会执行，只有在 d property 改变时才会调用回调
-      // 设置 immediate: true 表示 handler 回调会在一开始就被调用
+      // watch 在一开始时并不会执行 handler 回调，只会在 d property 发生改变时才会调用回调
+      // 设置 immediate: true 可以使 handler 回调在一开始就被调用
       immediate: true
     },
     // 第四种，值为一个包含回调数组，它们会被逐一调用
@@ -427,15 +427,17 @@ export default {
 </script>
 ```
 
-点击按钮时会修改数据对象中某些 property 的值，而 `watch` 会在监听到这些 property 值的变化时在控制台打印出相应内容：
+点击按钮时会修改数据对象中某些 property 的值，`watch` 会在监听到这些 property 值变化时在控制台打印出相应内容，结果如下：
 
 ![watch-数据变化](./imgs/watch-1.png)
 
-对于像 `n`、`visible` 、`obj1.a` 这种属于基本类型的 property，只要它们的值改变，就会被 `watch` 监听。
+对于像 `n`、`visible` 、`obj1.a` 这种属于基本类型的 property，只要它们的值发生改变，就会被 `watch` 监听。
 
-对于对象这种属于复杂类型的 property，只有当其引用值的地址发生改变才会被 `watch` 监听。点击按钮3执行 `obj1.a += 'ggg'` 时，只有 `obj1.a` 这个基本类型的值变化了，但 `obj1` 的引用值的地址并未改变，所以未被 `watch` 监听。点击按钮4执行 `obj2 = { b: 'bbb' }` 时，尽管 `obj2` 由赋值得到的新对象的键值对和之前一样，但 `obj2` 引用值的地址发生了改变，所以 `obj2` 会被 `watch` 监听。
+对于对象这种属于复杂类型的 property，只有当其引用值的地址发生改变才会被 `watch` 监听。点击按钮3执行 `obj1.a += 'ggg'` 时，`obj1.a` 这个基本类型的值发生变化了，但 `obj1` 的引用值的地址并未改变，所以未被 `watch` 监听。
 
-如果要想在 `obj1.a` 发生改变时也让 `watch` 认为 `obj1` 也改变了，可以使用 `deep: true`：
+点击按钮4执行 `obj2 = { b: 'bbb' }` 时，尽管 `obj2` 由赋值得到的新对象的键值对和之前一样，但 `obj2` 引用值的地址发生了改变，所以 `obj2` 还是会被 `watch` 监听。
+
+要想在 `obj1.a` 发生改变时也让 `watch` 认为 `obj1` 也改变了，可以添加 `deep: true`：
 
 ```vue
 //...
@@ -458,13 +460,13 @@ export default {
 
 ![watch-deep-true](./imgs/watch-2.png)
 
-#### watch 是异步的
+##### watch 是异步的
 
-页面中有一个展示当前值和操作历史的模块，如下图：
+页面中有一个展示当前值和操作历史的模块：
 
 ![watch-异步](./imgs/watch-3.png)
 
-当点击不同的加减按钮时，当前值和操作记录都会作相应的改变；点击撤销按钮会把当前值和操作记录恢复到之前的数据，代码如下：
+要实现的需求是，点击不同的加减按钮，当前值和操作记录都会被记录并展示在页面中；点击撤销按钮会把当前值和操作记录恢复到上一次操作的数据，相应代码如下：
 
 ```vue
 <template>
@@ -504,7 +506,7 @@ export default {
 </script>
 ```
 
-在页面中进行加减按钮操作后，再点击撤销按钮，会发现 `history` 并没有恢复到最后一次加减操作前的数据。这是由于 `n` 一直被 `watch` 着，`watch` 会把撤销操作里对 `n` 的赋值当成一个新的操作记录添加到 `history` 中，解决办法是添加一个状态来判断是否处于撤销中：
+在页面上点击加减按钮后，再点击撤销按钮，会发现 `history` 并没有被恢复为最后一次操作前的数据。这是由于 `n` 一直处于 `watch` 状态，`watch` 会把撤销操作里对 `n` 的赋值当成一个新的操作记录添加到 `history` 中，解决办法是添加一个状态来判断当前是否处于撤销中：
 
 ```vue
 <script>
@@ -512,13 +514,13 @@ export default {
   data () {
     return {
       // ...
-      // 添加一个状态表示是否处于撤销状态，默认是不处于
+      // 添加一个状态表示是否处于撤销中，默认是不处于撤销中
       inRevokeStatus: false
     }
   },
   watch: {
     n (newValue, oldValue) {
-      // 不处于撤销状态才会添加项到操作记录中
+      // 不处于撤销才会对 history 进行操作
       if (!this.inRevokeStatus) {
         this.history.push({ from: oldValue, to: newValue })
       }
@@ -526,11 +528,11 @@ export default {
   },
   methods: {
     revoke () {
-      // 点击撤销按钮后，将 inRevokeStatus 设置为处于撤销状态
+      // 点击撤销按钮后，将 inRevokeStatus 设置为撤销状态 true
       this.inRevokeStatus = true
       const lastItem = this.history.pop()
       this.n = lastItem.from
-      // 对 n 赋值后将 inRevokeStatus 设置为不处于撤销状态
+      // 在对 n 赋值后将 inRevokeStatus 设置为撤销状态 false
       this.inRevokeStatus = false
     }
   }
@@ -538,7 +540,7 @@ export default {
 </script>
 ```
 
-更新上面代码后再次进行之前的操作，会发现 `history` 中还是会有 `n` 在撤销操作中的数据，通过 log 验证点击撤销按钮后处于什么撤销状态：
+更新上述代码后再次进行之前的操作，会发现 `history` 中还是会有 `n` 在撤销操作中的数据。通过打 log 验证点击撤销按钮后处于什么撤销状态：
 
 ```vue
 <script>
@@ -558,18 +560,18 @@ export default {
 </script>
 ```
 
-控制台中打印出如下内容：
+结果如下：
 
 ![watch-异步](./imgs/watch-4.gif)
 
-尽管在撤销操作中设置了处于撤销状态，但在 `watch` 中通过 log 可以知道仍然是不处于撤销状态。这是因为 `watch` 是异步的，它会等当前代码执行完了才对 `n` 的变化进行操作，大体流程如下：
+尽管在撤销操作中设置了撤销状态，但在 `watch` 中打 log 可以知道目前依然是不处于撤销状态。这是因为 `watch` 是异步的过程，它会等当前代码执行完了才对 `n` 的变化进行操作，大体流程如下：
 
 ```javascript
-// 点击撤销按钮，先设置处于撤销状态
+// 点击撤销按钮，设置撤销状态 true
 this.inRevokeStatus = true
-// 对 n 赋值，这个时候 n 变化了，但是 watch 不会立即执行
+// 对 n 赋值，这个时候尽管 n 变化了，但是 watch 不会立即执行
 this.n = lastItem.from
-// 设置不处于撤销状态
+// 设置撤销状态 false
 this.inRevokeStatus = false
 // 最后 watch 才执行 n 变化的操作，这样的话永远不处于撤销状态，所以点击撤销按钮 history 中永远都会添加新的操作记录
 ```
@@ -594,13 +596,13 @@ export default {
 </script>
 ```
 
-最终效果如下图：
+结果如下：
 
 ![watch-异步](./imgs/watch-5.gif)
 
-#### watch vs computed
+##### watch vs computed
 
-在展示用户信息的场景示例中，也可以使用 `watch` 实现同样的效果：
+在展示用户信息的示例中，也可以使用 `watch` 来实现同样的效果：
 
 ```vue
 <template>
@@ -629,7 +631,7 @@ export default {
         const { user: { nickname, phone, email } } = this
         this.displayUser = nickname || phone || email
       },
-      // Vue 认为在开始时数据从无到有不是一个变化的过程，所以页面中的 displayUser 为空
+      // Vue 认为一开始的数据从无到有不是一个变化的过程，所以页面中的 displayUser 为空
       // immediate: true 表示数据从无到有也是变化的过程，页面中 displayUser 会有 nickname || phone || email 表达式的值
       immediate: true
     },
@@ -653,3 +655,8 @@ export default {
 ```
 
 相比较 `computed`，使用 `watch` 实现的代码，代码更多且有重复。在大多数 `computed` 和 `watch` 都能实现的情况下，尽量使用 `computed`，而如果需要在数据变化时进行一些操作，则使用 `watch`。
+
+总结：
+
+- `computed` 是计算属性，它会基于所依赖的响应式 property 动态显示最新的计算结果。计算属性的结果会被缓存，只有其依赖的响应式 property 有变化才会重新计算。计算属性应用于一个数据依赖其它 data property 的场景。
+- `watch` 是侦听器，可以通过 `watch` 观察数据对象中 property 值发生变化时执行一些操作，`watch` 是一个异步的过程。`watch` 会在回调中传入 `newValue` 和 `oldValue` 以供使用，也提供了 `immediate` 和 `deep` 选项以。`watch` 适用于 data property 值发生变化时执行一些操作。
