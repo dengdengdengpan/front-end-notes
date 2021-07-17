@@ -1,18 +1,16 @@
 # Class 与 Style 绑定
 
-在使用 Vue 开发项目时，经常会有操作元素 `class` 和 `style` 的需求。比如，在开发组件时，经常会使用计算属性来根据组件不同的 props 添加相应的 class，从而应用不同的样式。
+![class-and-style](./imgs/class-and-style.png)
+
+在使用 Vue 开发项目时，经常会有操作元素 `class` 和 `style` 的需求。比如，开发组件时会使用计算属性根据不同的 props 添加相应的 class，从而在组件上应用不同的样式。
 
 > 因为 `class` 和 `style` 都是 HTML attribute，所以可以通过 `v-bind` 进行处理：只需要绑定的表达式计算出字符串结果即可。不过，字符串拼接麻烦且容易出错。因此，`v-bind` 在用于 `class` 和 `style` 时，Vue 做了专门的增强，表达式结果的类型除了字符串，还可以是对象和数组。
 
-### 概览
-
-![class-and-style](./imgs/class-and-style.png)
-
 ### 绑定 Class
 
-#### 字符串语法
+##### 字符串语法
 
-`v-bind:class` 绑定的表达式计算结果可以是字符串，比如：
+`v-bind:class` 绑定表达式的计算结果可以是字符串：
 
 ```vue
 <template>
@@ -30,22 +28,22 @@ export default {
 </script>
 ```
 
-结果渲染如下图：
+渲染结果如下：
 
 ![vue-class-1](./imgs/class-1.png)
 
-同时，使用字符串语法也可以绑定多个 class，代码如下：
+使用字符串语法也可以绑定多个 class：
 
 ```vue
 <template>
-  <div :class="classes">绑定多个 class</div>
+  <div :class="classList">绑定多个 class</div>
 </template>
 
 <script>
 export default {
   data () {
     return {
-      classes: 'xxx yyy zzz'
+      classList: 'xxx yyy zzz'
     }
   }
 }
@@ -75,11 +73,11 @@ export default {
 </script>
 ```
 
-在页面中使用按钮组件后结果渲染如下图：
+在页面中使用按钮组件后渲染结果如下：
 
 ![vue-class-3](./imgs/class-3.png)
 
-**`v-bind:class` 指令可以与普通的 class attribute 共存**，有如下模板：
+**`v-bind:class` 指令也可以与普通的 class attribute 共存**，有如下模板：
 
 ```vue
 <template>
@@ -91,9 +89,9 @@ export default {
 
 ![vue-class-4](./imgs/class-4.png)
 
-### 对象语法
+##### 对象语法
 
-绑定 class 时，也可以**传给 `v-bind:class` 一个对象，以动态地切换 class**：
+绑定 class 时，也可以**传给 `v-bind:class` 一个对象，用以动态地切换 class**：
 
 ```vue
 <template>
@@ -101,15 +99,15 @@ export default {
 </template>
 ```
 
-在上述代码中，`active` class 是否存在取决于数据 property `isActive` 值的真假。比如，当 `isActive` 值为真时，结果渲染如下图：
+上述代码中 `active` class 是否存在取决于数据 property `isActive` 值的真假。比如，当 `isActive` 值为真时，渲染结果如下：
 
 ![vue-class-5](./imgs/class-5.png)
 
-同时，也可以在对象中传入更多的字段来**动态**切换多个 class。而且，绑定 class 的对象语法也可以和普通的 class attribute 共存。比如，有如下模板：
+我们也可以在对象中传入更多的字段来**动态**切换多个 class。并且，绑定 class 的对象语法也可以和普通的 class attribute 共存。比如，有如下模板：
 
 ```vue
 <template>
-  <div class="demo" :class="{ active: isActive, disabled: isDisabled, loading: isLoading }" />
+  <div class="demo" :class="{ active: isActive, disabled: isDisabled, loading: isLoading, 'has-sider': hasSider }" />
 </template>
 
 <script>
@@ -118,18 +116,19 @@ export default {
     return {
       isActive: true,
       isDisabled: false,
-      isLoading: true
+      isLoading: true,
+      hasSider: false
     }
   }
 }
 </script>
 ```
 
-最终渲染结果如下图：
+渲染结果如下：
 
 ![vue-class-object-6](./imgs/class-6.png)
 
-当数据对象中 `isActive`、`isDisabled`、`isLoading` 有变化时，class 列表会动态更新，当有如下修改时：
+当数据对象中 `isActive`、`isDisabled`、`isLoading` 有变化时，class 列表会动态更新。当有如下修改时：
 
 ```vue
 <script>
@@ -145,11 +144,11 @@ export default {
 </script>
 ```
 
-class 列表将变成下图：
+元素的 class 列表将会自动更新，结果如下：
 
 ![vue-class-object-2](./imgs/class-7.png)
 
-在使用对象语法时，也可不必将对象内联在模板里：
+使用对象语法绑定 class 时，可以将对象放在 data 中，而不必将对象内联在模板里：
 
 ```vue
 <template>
@@ -171,11 +170,11 @@ export default {
 </script>
 ```
 
-在页面上渲染结果如下图：
+渲染结果如下：
 
 ![vue-class-object-6](./imgs/class-6.png)
 
-在 `v-bind:class` 中也可以绑定一个返回对象的计算属性，这是一种更常用且强大的模式：
+在 `v-bind:class` 中也可以绑定一个返回对象的计算属性，这是一种更常用且更强大的模式：
 
 ```vue
 <template>
@@ -205,9 +204,9 @@ export default {
 </script>
 ```
 
-#### 数组语法
+##### 数组语法
 
-在绑定 class 时，也可以**传一个数组给 `v-bind:class`，以应用一个 class 列表**：
+在绑定 class 时，也可以**传一个数组给 `v-bind:class`，用以应用一个 class 列表**：
 
 ```vue
 <template>
@@ -226,7 +225,7 @@ export default {
 </script>
 ```
 
-最终结果渲染如下图：
+渲染结果如下：
 
 ![vue-class-8](./imgs/class-8.png)
 
@@ -238,7 +237,9 @@ export default {
 </template>
 ```
 
-此时，`active` class 是否存在取决于数据 property `isActive` 值的真假。此外，也可以在数组语法中使用字符串语法、对象语法，而且配合返回一个数组的计算属性使用是更强大的模式：
+`active` class 是否存在取决于data 中 `isActive` property 值的真假。
+
+此外，我们也可以在数组语法中使用字符串语法、对象语法。并且，绑定一个返回数组的计算属性，这是一种更常用且更强大的模式：
 
 ```vue
 <template>
@@ -246,6 +247,8 @@ export default {
 </template>
 
 <script>
+import { oneOf } from '@/utils/index.js'
+
 const prefixClass = 'w-button-'
 
 export default {
@@ -254,7 +257,7 @@ export default {
     iconPosition: {
       type: String,
       validator (value) {
-        return oneof(value, ['left', 'right'])
+        return oneOf(value, ['left', 'right'])
       }
     },
     loading: {
@@ -275,9 +278,9 @@ export default {
 </script>
 ```
 
-#### 用在组件上
+##### 用在组件上
 
-**当在自定义组件上使用 class 时（不管是否使用 `v-bind` 绑定），这些 class 会被添加到组件的根元素上。同时，这个根元素上已经存在的 class 不会被覆盖**。比如，有如下自定义组件：
+**当在自定义组件上使用 class 时（不管是否使用 `v-bind` 绑定），这些 class 都会被添加到组件的根元素上。同时，这个根元素上已经存在的 class 不会被覆盖**。比如，有如下自定义组件：
 
 ```vue
 <template>
@@ -292,19 +295,19 @@ export default {
 </script>
 ```
 
-在使用组件时，添加 class：
+在使用组件时绑定 class：
 
 ```vue
-<my-component class="xxx" :class="[{active: isActive}, 'yyy']" />
+<my-component class="xxx" :class="[{ active: isActive }, 'yyy']" />
 ```
 
-如果 `isActive` 的值为真，那么结果渲染如下图：
+如果 `isActive` 的值为真，那么渲染结果如下图：
 
 ![vue-class-9](./imgs/class-9.png)
 
 ### 绑定 Style
 
-#### 字符串语法
+##### 字符串语法
 
 `v-bind:style` 绑定的表达式计算结果可以是字符串，用以在元素上添加内联样式。同时，`v-bind:style` 可以和普通的 style attribute 共存，有如下模板：
 
@@ -329,7 +332,7 @@ export default {
 
 ![vue-style-1](./imgs/style-1.png)
 
-#### 对象语法
+##### 对象语法
 
 绑定 style 时，可以传给 `v-bind:style` 一个对象，用以添加内联样式。在这个对象中，CSS property 名可以使用驼峰式或者短横线分隔（用引号括起来）来命名，有如下模板：
 
@@ -350,7 +353,7 @@ export default {
 </script>
 ```
 
-结果渲染如下图：
+渲染结果如下：
 
 ![vue-style-2](./imgs/style-2.png)
 
@@ -374,11 +377,36 @@ export default {
 </script>
 ```
 
-同样的，配合使用一个返回对象的计算属性是更常用且强大的模式。
+同样地，绑定一个返回对象的计算属性是更常用且更强大的模式：
 
-#### 数组语法
+```vue
+<template>
+  <div :style="styleObj">绑定一个返回对象的计算属性</div>
+</template>
 
-绑定 style 时，也可以传一个数组，**数组中可以包含多个样式对象**：
+<script>
+export default {
+  props: {
+    ratio: {
+      type: String
+    }
+  },
+  computed: {
+    styleObj () {
+      const { ratio } = this
+      const iconColor = ratio.includes('-') ? '#ff4d4f' : '#a0d911'
+      return {
+        color: iconColor
+      }
+    }
+  }
+}
+</script>
+```
+
+##### 数组语法
+
+绑定 style 时，也可以传一个数组，数组中可以包含多个样式对象：
 
 ```vue
 <template>
@@ -401,6 +429,6 @@ export default {
 </script>
 ```
 
-结果渲染如下图：
+渲染结果如下：
 
 ![vue-style-3](./imgs/style-3.png)
