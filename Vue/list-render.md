@@ -65,7 +65,7 @@ export default {
 
 ##### 对象
 
-`v-for` 指令可以遍历一个对象，第一参数是属性值：
+`v-for` 指令可以遍历一个对象，第一个参数是属性值：
 
 ```vue
 <template>
@@ -214,15 +214,15 @@ export default {
 
 > 如果数据项的顺序被改变，Vue 将不会移动 DOM 元素来匹配数据项的顺序，而是就地更新每个元素，并且确保它们在每个索引位置正确渲染。
 
-比如，页面上有如下模块：
+比如，页面上有如下模块，一个 add 按钮和一块根据 `itemList` 展示列表（默认为空）：
 
 ![v-for-10](./imgs/v-for-10.png)
 
-当点击 add 按钮时会往 `itemList` 数组里添加一项，`v-for` 指令则会根据 `itemList` 将内容渲染出来。比如，在点击了三次 add 按钮后：
+当点击 add 按钮时会往 `itemList` 数组里添加一项，`v-for` 指令则会根据 `itemList` 将对应内容渲染出来。比如，在点击了三次 add 按钮后：
 
 ![v-for-11](./imgs/v-for-11.gif)
 
-其中，红色方框部分是一个子组件 `ChildItem`，toggle 按钮用于切换 `status` 的值，相应代码如下：
+其中，红色方框部分是一个组件 `ChildItem`，toggle 按钮用于切换 `status` 的值，相应代码如下：
 
 ```vue
 <template>
@@ -234,6 +234,7 @@ export default {
 
 <script>
 export default {
+  name: 'ChildItem',
   data () {
     return {
       status: false
@@ -262,7 +263,7 @@ span {
   <div id="app">
     <button @click="add">add</button>
     <ul>
-      <li v-for="(item, index) in itemList">
+      <li v-for="(item, index) in itemList" :class="`item-${item.id}`">
         <child-item />
         <button @click="remove(index)">remove</button>
       </li>
@@ -299,17 +300,218 @@ export default {
 
 ![v-for-12](./imgs/v-for-12.gif)
 
-，删除第一项后，剩下的两项应该是一个带有 `true` 的项和一个带有 `false` 的项。但实际的结果
+按照我们的预期，在删除第一项后，剩下的两项应该是一个带有 `true` 的项和一个带有 `false` 的项，但结果却是剩下两个带 `true` 的项，反而是最后一项带 `false` 的被删除了。
 
-### 在 `<template>` 上使用 `v-for`
+实际过程是这样的，点击三次 add 按钮后，`itemList` 变为：`[{ id: 1627713812082 }, { id: 1627713812494 }, { id: 1627713813326 }]`，页面上也会有三个 `<li>` 元素。
 
-因为 `v-for` 是一个指令，所以必须将它添加到一个元素上才起作用。如果想要使用 `v-for` 循环渲染多个元素而不添加多余的包裹元素，可以把 `<template>` 元素当作一个不可见的包裹元素，并在上面添加 `v-for`。最终的渲染结果只有 `<template>` 元素所包含的元素，而不会包含 `<template>` 元素自身：
+在点击第一项的 remove 按钮后，`itemList[0]` 会被删除，现在 `itemList` 变为：`[{ id: 1627713812494 }, { id: 1627713813326 }]`。Vue 发现 `itemList` 有变化后，`v-for` 指令会遍历当前只有两项的 `itemList` 并渲染。同时 Vue 默认采用就地更新策略，它会原地修改元素，过程如下：
+
+![v-for-13](./imgs/v-for-13.gif)
+
+可以看见 `itemList[0]` 确实被删除了，不过 Vue 会直接复用之前的 DOM 并修改元素。第一个 `<li>` 元素的 class 变更为最初 `itemList` 有三项时的**第二项**的 id，即 `1627713812494`。第二个 `<li>` 元素的 class  变更为最初  `itemList` 有三项时的**第三项**的 id，即 `1627713813326`。由于现在 `itemList` 只有两项，所以带有 `fasle` 的第三个 `<li>` 元素便被“删除“了。而由于被复用的第一个和第二个 `<li>` 元素中的 ChildItem 子组件的 `status` 仍是 `true`，所以页面上会显示两个带有 `true` 的项。
+
+要想让 Vue 跟踪每个数据项对应的 DOM 节点，需要添加一个具有唯一标识的 **`key`** attribute：
 
 ```vue
 <template>
-  <div class="wrapper">
-    
+  <div id="app">
+    <button @click="add">add</button>
+    <ul>
+      <!-- 添加 key -->
+      <li v-for="(item, index) in itemList" :key="item.id" :class="`item-${item.id}`">
+        <child-item />
+        <button @click="remove(index)">remove</button>
+      </li>
+    </ul>
   </div>
 </template>
 ```
 
+这样 Vue 便能跟踪每个 DOM 节点的身份，它会基于 key 的变化重用和重新排序现有元素。当点击 remove 按钮时，Vue 会明确地知道移除哪个节点：
+
+![v-for-14](./imgs/v-for-14.gif)
+
+建议尽可能在使用 `v-for` 时提供 `key` attribute，同时不要使用对象或数组之类的非基本类型值作为 `v-for` 的 `key`，要用字符串或数值类型的值。
+
+### 在 `<template>` 上使用 `v-for`
+
+因为 `v-for` 是一个指令，所以必须将它添加到一个元素上才起作用。如果想使用 `v-for` 循环渲染多个元素而不添加多余的包裹元素，可以使用 `<template>` 元素，将它当作一个不可见的包裹元素，并在上面添加 `v-for`。最终的渲染结果将不会包含 `<template>` 元素：
+
+```vue
+<template>
+  <div id="app">
+    <template v-for="(item, index) in itemList">
+      <span :key="item">{{ index }}-</span>
+      <strong :key="item">{{ item }}</strong>
+      <br :key="item" />
+    </template>
+  </div>
+</template>
+```
+
+值得注意的是 `key` attribute 要添加在需要实际展示的元素上，结果如下：
+
+![v-for-15](./imgs/v-for-15.png)
+
+### 在组件上使用 `v-for`
+
+在组件上也可以使用 `v-for` 指令，此时 `key` 是必须的：
+
+```vue
+<template>
+  <div id="app">
+    <my-component v-for="item in itemList" :key="item" />
+  </div>
+</template>
+```
+
+### 数组更新检测
+
+##### 变更方法
+
+Vue 对被侦听的数组的**变更方法**进行了**包裹**，所以它们也会触发视图更新。这些被包裹过的变更方法包括：
+
+`push()`、`pop()`、`shift()`、`unshift()`、`splice()`、`sort()`、`reverse()`。比如页面上有以下模块：
+
+![v-for-16](./imgs/v-for-16.png)
+
+相应代码如下：
+
+```vue
+<template>
+  <div id="app">
+    <button @click="add">add</button>
+    <ul>
+      <li v-for="item in itemList" :key="item">{{ item }}</li>
+    </ul>
+  </div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      itemList: ['HTML', 'CSS', 'JavaScript']
+    }
+  },
+  methods: {
+    add () {
+      this.itemList.push('Vue')
+    }
+  }
+}
+</script>
+```
+
+当点击 add 按钮时会调用 `itemList` 的 `push` 方法，从而触发视图更新：
+
+![v-for-17](./imgs/v-for-17.png)
+
+##### 替换数组
+
+在 JavaScript 中也有一些方法不会改变原始数组，而总是返回一个新数组，例如 `filter()`、`concat()` 、`slice()`。在使用它们时，可以用新数组替换旧数组的方式。这种方式并不会让 Vue 重新渲染整个列表，这是因为：
+
+> Vue 为了使得 DOM 元素得到最大范围的重用而实现了一些智能的启发式方法，所以用一个含有相同元素的数组去替换原来的数组是非常高效的操作。
+
+比如，有以下代码：
+
+```vue
+<template>
+  <div id="app">
+    <button @click="add">add</button>
+    <p v-for="item in itemList" :key="item">{{ item }}</p>
+  </div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      itemList: ['a', 'b', 'c']
+    }
+  },
+  methods: {
+    add () {
+      this.itemList = this.itemList.concat(['d', 'e', 'f'])
+    }
+  }
+}
+</script>
+```
+
+当点击 add 按钮时，页面 DOM 的变化过程：
+
+![v-for-18](./imgs/v-for-18.gif)
+
+可以看见，Vue 没有重新渲染整个 `itemList`，它只渲染了 `itemList` 中新增加的部分。
+
+##### 注意事项
+
+由于 JavaScript 的限制，Vue **不能检测**数组和对象的变化。
+
+### `v-for` 与 `v-if` 一同使用
+
+当它们用在同一元素时，`v-for` 的优先级比 `v-if` 更高，这意味着 `v-if` 将分别重复运行于每个 `v-for` 循环中。一般有两种常见的情况下会倾向于将它们用在同一元素上，但都有更好的方法避免：
+
+- 为了过滤源数据中的某些项，这种情形可以使用计算属性。比如，在所有用户中展示活跃用户：
+
+  ```vue
+  <template>
+    <ul>
+      <li v-for="user in userList" v-if="user.isActive" :key="user.id">{{ user.name }}</li>
+    </ul>
+  </template>
+  ```
+
+  这种情形下都将会经过以下运算：
+
+  ```javascript
+  this.userList.map(user => {
+    if (user.isActive) {
+      return user.name
+    }
+  })
+  ```
+
+  尽管只需要展示活跃用户，但每次渲染时都会遍历整个用户列表，而不管活跃的用户是否发生变化。这种方式在渲染上低效，并且逻辑耦合。
+
+  我们可以将源数据更换为在一个活跃用户的计算属性上遍历：
+
+  ```vue
+  <template>
+    <ul>
+      <li v-for="user in userListActive" :key="user.id">{{ user.name }}</li>
+    </ul>
+  </template>
+  
+  <script>
+  export default {
+    computed: {
+      userListActive () {
+        return this.userList.filter(user => {
+          return user.isActive
+        })
+      }
+    }
+  }
+  </script>
+  ```
+
+  这样做的好处有：
+
+  - 过滤后的列表只有在 `userList` 发生相关变化时才被重新计算，过滤更高效。
+  - 源数据更换为计算属性 `userListActive` 后，渲染时只会遍历活跃用户，渲染更高效。
+  - 解耦渲染层的逻辑，可维护性 (对逻辑的更改和扩展) 更强
+
+- 为了避免渲染本应该被隐藏的列表，这种情形可以将 `v-if` 移动至容器元素上。比如，当有 todo item 才渲染：
+
+  ```vue
+  <template>
+    <div>
+      <ul v-if="todoList.length">
+        <li v-for="todo in todoList":key="todo.id">{{ todo.name }}</li>
+      </ul>
+      <p v-else>当前没有待做事项！</p>
+    </div>
+  </template>
+  ```
