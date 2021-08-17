@@ -18,4 +18,5 @@
 - [计算属性和侦听器](./Vue/computed-watch.md)
 - [Class 与 Style 绑定](./Vue/class-and-style.md)
 - [条件渲染](./Vue/condition-render.md)
+- [列表渲染](./Vue/list-render.md)
 
