@@ -1,12 +1,12 @@
 # 列表渲染
 
-### v-for 循环的源数据
+### v-for 循环
 
-`v-for` 指令用于列表渲染，它会基于源数据多次渲染元素或模板块，源数据的数据类型可以是：`Array`、`Object`、`Number`、`String`、`Iterable`。
+`v-for` 指令会基于源数据多次渲染元素或模板块，源数据的数据类型可以是：`Array`、`Object`、`Number`、`String` 或 `Iterable`。`v-for` 指令在使用时的值必须使用形如 `alias in expression` 的特殊语法。其中，`alias` 是当前被遍历元素的别名，`expression` 是源数据。
 
 ##### 数组
 
-`v-for` 指令可以基于数组来渲染一个列表。`v-for` 指令需要使用形如 `item in items` 的特殊语法，其中 `items` 是源数据数组，而 `item` 则是被迭代的数组元素的别名：
+`v-for` 指令可以基于一个数组来渲染一个列表：
 
 ```vue
 <template>
@@ -37,11 +37,11 @@ export default {
 </script>
 ```
 
-结果如下：
+结果：
 
 ![v-for-1](./imgs/v-for-1.png)
 
-另外 `v-for` 还支持第二个可选的参数——即当前项的索引：
+另外，`v-for` 还支持一个可选的第二个参数，即当前项的索引（索引从 0 开始）：
 
 ```vue
 <template>
@@ -53,11 +53,11 @@ export default {
 </template>
 ```
 
-结果如下：
+结果：
 
 ![v-for-2](./imgs/v-for-2.png)
 
-对于分隔符，我们也可以用 `of` 来替代 `in`，因为它更接近 JavaScript 迭代器的语法：
+对于分隔符，还可以用 `of` 来替代 `in`，因为它更接近 JavaScript 迭代器的语法：
 
 ```vue
 <li v-for="role of roleList" :key="role.name"></li>
@@ -65,7 +65,7 @@ export default {
 
 ##### 对象
 
-`v-for` 指令可以遍历一个对象，第一个参数是属性值：
+`v-for` 指令也可以遍历一个对象，第一个参数是属性值：
 
 ```vue
 <template>
@@ -91,7 +91,7 @@ export default {
 </script>
 ```
 
-结果如下：
+结果：
 
 ![v-for-3](./imgs/v-for-3.png)
 
@@ -107,11 +107,11 @@ export default {
 </template>
 ```
 
-结果如下：
+结果：
 
 ![v-for-4](./imgs/v-for-4.png)
 
-最后还可以用第三个参数作为索引：
+还可以用第三个参数作为索引：
 
 ```vue
 <template>
@@ -123,15 +123,15 @@ export default {
 </template>
 ```
 
-结果如下：
+结果：
 
 ![v-for-5](./imgs/v-for-5.png)
 
-值得注意的是，`v-for` 遍历对象时，会按 `Object.keys()` 的结果遍历，但不能保证它的结果在不同 JavaScript 引擎下都一致。
+另外，`v-for` 在遍历对象时，会按 `Object.keys()` 的结果遍历，但不能保证它在不同 JavaScript 引擎下的结果都一致。
 
 ##### 数值
 
-`v-for` 指令也可以接受一个**正整数**作为源数据，它会基于该正整数将模板重复渲染对应次数：
+`v-for` 指令也可以接受一个正整数作为源数据，它会把模板重复渲染对应次数：
 
 ```vue
 <template>
@@ -139,11 +139,11 @@ export default {
 </template>
 ```
 
-结果如下：
+结果：
 
 ![v-for-6](./imgs/v-for-6.png)
 
-同样地，第二个可选的参数作为索引：
+还可以提供可选的第二个参数作为索引：
 
 ```vue
 <template>
@@ -151,13 +151,13 @@ export default {
 </template>
 ```
 
-结果如下：
+结果：
 
 ![v-for-7](./imgs/v-for-7.png)
 
 ##### 字符串
 
-`v-for` 指令还可以接受一个字符串作为源数据，它会基于该字符串的长度进行循环渲染。其中，第一参数作为字符串的，第二个参数作为当前字符串的索引：
+`v-for` 指令还可以接受一个字符串作为源数据，它会基于字符串的长度进行循环渲染。其中，第一个参数是被遍历的字符，第二个参数是索引：
 
 ```vue
 <template>
@@ -177,13 +177,13 @@ export default {
 </script>
 ```
 
-结果如下：
+结果：
 
 ![v-for-8](./imgs/v-for-8.png)
 
 ##### Iterable
 
-`v-for` 指令也可以用在具有可遍历的数据结构的值上，包括原生的 `Map` 和 `Set`：
+`v-for` 指令还可以在实现了可迭代协议的值上使用，包括原生的 `Map` 和 `Set`：
 
 ```vue
 <template>
@@ -204,132 +204,77 @@ export default {
 </script>
 ```
 
-结果如下：
+结果：
 
 ![v-for-9](./imgs/v-for-9.png)
 
-### `v-for` 更新数据的模式
+### `v-for` 更新策略
 
-在使用 `v-for` 渲染元素列表时，Vue 默认采用更加高效的**就地更新**模式，即：
+当 Vue 正在更新使用 `v-for` 渲染的元素列表时，它默认使用更加高效的**就地更新**策略，即：
 
 > 如果数据项的顺序被改变，Vue 将不会移动 DOM 元素来匹配数据项的顺序，而是就地更新每个元素，并且确保它们在每个索引位置正确渲染。
 
-比如，页面上有如下模块，一个 add 按钮和一块根据 `itemList` 展示列表（默认为空）：
+上面内容比较难理解，可以通过以下示例来理解，页面有一个使用 `v-for` 基于 `ballList` 渲染的列表：
 
 ![v-for-10](./imgs/v-for-10.png)
 
-当点击 add 按钮时会往 `itemList` 数组里添加一项，`v-for` 指令则会根据 `itemList` 将对应内容渲染出来。比如，在点击了三次 add 按钮后：
+列表的渲染模板由展示球类名称的  `<span>` 元素、可输入内容的 `input` 元素以及点击后删除当前项的 `<button>` 元素组成，对应代码：
+
+```vue
+<template>
+  <ul id="app">
+    <li v-for="(ball, index) in ballList" :key="ball" :class="ball">
+      <span>{{ ball }}</span>
+      <input />
+      <button @click="remove(index)">remove</button>
+    </li>
+    <p>ballList: {{ ballList }}</p>
+  </ul>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      ballList: ['足球', '篮球', '排球']
+    }
+  },
+  methods: {
+    remove (index) {
+      this.ballList.splice(index, 1)
+    }
+  }
+};
+</script>
+```
+
+在“足球”这一行的 input 框输入内容后，点击 remove 按钮。按照预期，“足球”这一行将会被删除，但结果与预期不符：
 
 ![v-for-11](./imgs/v-for-11.gif)
 
-其中，红色方框部分是一个组件 `ChildItem`，toggle 按钮用于切换 `status` 的值，相应代码如下：
+可以看见，“足球”确实被删除了，但其后 input 框的输入的内容却还在，并且第三个 `<li>` 元素像是被删除了。这是因为 `v-for` 渲染的列表在源数据变化时，Vue 为了高效会尽可能地复用/修改 DOM 中已经存在的同类型元素，所以实际上是这样变化地：
 
-```vue
-<template>
-  <span>
-    <strong>{{ status }}</strong>
-    <button @click="toggle">toggle</button>
-  </span>
-</template>
-
-<script>
-export default {
-  name: 'ChildItem',
-  data () {
-    return {
-      status: false
-    }
-  },
-  methods: {
-    toggle () {
-      this.status = !this.status
-    }
-  }
-}
-</script>
-
-<style scoped>
-span {
-  padding: .2em .5em;
-  border: 1px solid red;
-}
-</style>
-```
-
-整个页面是由 App.vue 构建，remove 按钮用于删除当前项，相应代码如下：
-
-```vue
-<template>
-  <div id="app">
-    <button @click="add">add</button>
-    <ul>
-      <li v-for="(item, index) in itemList" :class="`item-${item.id}`">
-        <child-item />
-        <button @click="remove(index)">remove</button>
-      </li>
-    </ul>
-  </div>
-</template>
-
-<script>
-import ChildItem from './components/ChildItem.vue'
-
-export default {
-  components: { ChildItem },
-  data () {
-    return {
-      status: false,
-      itemList: []
-    }
-  },
-  methods: {
-    add () {
-      this.itemList.push({
-        id: Date.now()
-      })
-    },
-    remove (index) {
-      this.itemList.splice(index, 1)
-    }
-  }
-}
-</script>
-```
-
-现进行以下操作，先点击三次 add 按钮，然后点击前两项的 toggle 按钮将 `status` 状态变更为 `true`，最后点击第一项的 remove 按钮：
-
-![v-for-12](./imgs/v-for-12.gif)
-
-按照我们的预期，在删除第一项后，剩下的两项应该是一个带有 `true` 的项和一个带有 `false` 的项，但结果却是剩下两个带 `true` 的项，反而是最后一项带 `false` 的被删除了。
-
-实际过程是这样的，点击三次 add 按钮后，`itemList` 变为：`[{ id: 1627713812082 }, { id: 1627713812494 }, { id: 1627713813326 }]`，页面上也会有三个 `<li>` 元素。
-
-在点击第一项的 remove 按钮后，`itemList[0]` 会被删除，现在 `itemList` 变为：`[{ id: 1627713812494 }, { id: 1627713813326 }]`。Vue 发现 `itemList` 有变化后，`v-for` 指令会遍历当前只有两项的 `itemList` 并渲染。同时 Vue 默认采用就地更新策略，它会原地修改元素，过程如下：
-
-![v-for-13](./imgs/v-for-13.gif)
-
-可以看见 `itemList[0]` 确实被删除了，不过 Vue 会直接复用之前的 DOM 并修改元素。第一个 `<li>` 元素的 class 变更为最初 `itemList` 有三项时的**第二项**的 id，即 `1627713812494`。第二个 `<li>` 元素的 class  变更为最初  `itemList` 有三项时的**第三项**的 id，即 `1627713813326`。由于现在 `itemList` 只有两项，所以带有 `fasle` 的第三个 `<li>` 元素便被“删除“了。而由于被复用的第一个和第二个 `<li>` 元素中的 ChildItem 子组件的 `status` 仍是 `true`，所以页面上会显示两个带有 `true` 的项。
+当“足球”项被删除时，`v-for` 会根据新的 `ballList` 重新进行渲染，接着 Vue 将 `ballList` 新的值 `['篮球', '排球']` 直接更新到以前的第一个和第二个 `<li>` 元素上，所以第三个 `<li>` 元素会被删除。同时，由于  `<span>` 元素内的文本绑定了 `ballList` 中被遍历的项，所以 Vue 会直接在第一个和第二个 `<li>` 的 `<span>` 元素中更新值。对于 `<input>` 元素，它没有和 `data` 中的任何数据绑定，所以它会被 Vue 直接复用。因此在“足球”项中输入的内容仍然会存在。
 
 要想让 Vue 跟踪每个数据项对应的 DOM 节点，需要添加一个具有唯一标识的 **`key`** attribute：
 
 ```vue
 <template>
-  <div id="app">
-    <button @click="add">add</button>
-    <ul>
-      <!-- 添加 key -->
-      <li v-for="(item, index) in itemList" :key="item.id" :class="`item-${item.id}`">
-        <child-item />
-        <button @click="remove(index)">remove</button>
-      </li>
-    </ul>
-  </div>
+  <ul id="app">
+    <!-- 添加 key -->
+    <li v-for="(ball, index) in ballList" :key="ball" :class="ball">
+      <span>{{ ball }}</span>
+      <input />
+      <button @click="remove(index)">remove</button>
+    </li>
+    <p>ballList: {{ ballList }}</p>
+  </ul>
 </template>
 ```
 
 这样 Vue 便能跟踪每个 DOM 节点的身份，它会基于 key 的变化重用和重新排序现有元素。当点击 remove 按钮时，Vue 会明确地知道移除哪个节点：
 
-![v-for-14](./imgs/v-for-14.gif)
+![v-for-12](./imgs/v-for-12.gif)
 
 建议尽可能在使用 `v-for` 时提供 `key` attribute，同时不要使用对象或数组之类的非基本类型值作为 `v-for` 的 `key`，要用字符串或数值类型的值。
 
