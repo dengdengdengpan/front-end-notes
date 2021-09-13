@@ -1,5 +1,7 @@
 # 事件处理
 
+![events](./imgs/events.png)
+
 ### 监听事件
 
 Vue 使用 `v-on` 指令来监听 DOM 事件，并在触发事件时执行一些 JavaScript。`v-on` 指令绑定的表达式的值可以有以下几种：
@@ -230,11 +232,11 @@ export default {
 - `.tab`
 - `.delete`（捕获“删除”和“退格”按键）
 - `.esc`
-- `space`
-- `up`
-- `down`
-- `left`
-- `right`
+- `.space`
+- `.up`
+- `.down`
+- `.left`
+- `.right`
 
 ##### 系统修饰符
 
