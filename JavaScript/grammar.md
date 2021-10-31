@@ -18,7 +18,7 @@ JavaScript 中的一切都**区分大小写**，无论是变量、函数名、�
 
   - **剩下的其它字符可以是字母、下划线、美元符号或数字（0-9）**。
 
-  - 由于 JavaScript 使用的是 **Unicode** 字符集，所以可以使用 Unicode 中的字母字符。比如，中文也是合法的变量名
+  - 由于 JavaScript 使用的是 **Unicode** 字符集，所以可以使用 Unicode 中的字母字符。比如，中文也是合法的变量名。
 
   - 关键字、保留字、`true`、`false`、`null` 不能用作变量名。
 
@@ -56,7 +56,7 @@ JavaScript 中的一切都**区分大小写**，无论是变量、函数名、�
 
   ```javascript
   10 // 10 是一个算数表达式，由 JS 解释器计算为数值 10
-  5 + 3 // 计算为数值 8 的算数表达式
+  5 + 3 // 计算值是 8 的算数表达式
   ```
 
 - 字符串表达式：计算结果为字符串，一般使用字符串操作符。
@@ -78,20 +78,16 @@ JavaScript 中的一切都**区分大小写**，无论是变量、函数名、�
 
   ```javascript
   this // 比如 this 关键字，其值为使用的当前对象
-  100
-  'hello world'
-  true
-  currentValue // 变量 currentValue 的值
   
   // 使用分组操作符()控制表达式中计算的优先级
-  let a = 1
-  let b = 2
-  let c = 3
+  let a = 1;
+  let b = 2;
+  let c = 3;
   a + b * c // 7，默认优先级，相当于 a + (b * c)
   (a + b) * c // 9，通过 () 操作符使加法优先
   ```
-
-- 左值表达式：左值是赋值的目标。在 JavaScript 中左值是使用**引用**类型的，比如变量、数组、对象、函数等，如下：
+  
+- 左值表达式：左值是赋值的目标。在 JavaScript 中左值是使用**引用**类型的，比如变量、数组、对象、函数等。
 
   ```javascript
   a = 10 // 不报错，变量 a 对当前执行环境中变量名为 a 的引用
@@ -111,7 +107,7 @@ JavaScript 中的一切都**区分大小写**，无论是变量、函数名、�
   fn = 'test' // 对当前执行环境中函数名为 fn 函数的引用，不会报错
   fn() = 'test' // 函数调用则会报错，Uncaught ReferenceError: Invalid left-hand side in assignment
   ```
-根据上述内容可以将表达式划分为两种类型：**单纯计算求值的和有副作用的**。比如，算数表达式 `3 + 5` 就是单纯求值的，求值结果为 8。而赋值表达式 `a = 10` 通过 `=` 操作符将值 10 赋值给变量 a，改变了变量 a 的值，同时该表达式自身的值为 10。除了赋值表达式外，还有副作用的表达式有：
+  从概念上讲，有两种类型的表达式：**单纯计算求值的和有副作用的**。比如，算数表达式 `3 + 5` 就是单纯求值的，其求值结果为 8。而赋值表达式就是有副作用的， `a = 10` 通过 `=` 操作符将数值 10 赋值给变量 a，从而改变了变量 a 的值，同时该表达式自身的计算值是 10。除了赋值表达式外，还有副作用的表达式有：
 
   ```javascript
   add(1, 3) // 函数调用
@@ -150,12 +146,12 @@ if (var b = 1) {} // var b = 1 是语句，会报错Uncaught SyntaxError: Unexpe
 
 ### 注释
 
-JavaScript 注释和 C 语言类似，包括**单行注释**和**多行注释**。
+在 JavaScript 中，有两种添加注释的方式，分别是：**单行注释**和**多行注释**。
 
 ```javascript
 // 单行注释
+
 /* 
-这是
 多行
 注释
 */
@@ -163,20 +159,20 @@ JavaScript 注释和 C 语言类似，包括**单行注释**和**多行注释**�
 
 ### 关键字和保留字
 
-- 关键字在 JavaScript 中有特殊的用途，比如表示控制语句的开始和结束，或者执行特定的操作。比如有：`import`、`export`、`if`、`else`、`switch`、`catch`、`this`、`new`、`delete`、`var`、`const`、`class`
-- 保留字目前在 JavaScript 中还没有特殊用途，但它们是保留给将来做关键字用的。比如始终保留：`enum`；严格模式下保留：`let`、`package`、`public`、`interface`
-- 保留字和关键字都不能用作标识符
+- 关键字在 JavaScript 中有特殊的用途，比如表示控制语句的开始和结束，或者执行特定的操作。比如有：`import`、`export`、`if`、`else`、`switch`、`catch`、`this`、`new`、`delete`、`var`、`const`、`class` 等。
+- 保留字目前在 JavaScript 中还没有特殊用途，但它们是保留给将来做关键字用的。比如始终保留：`enum`；严格模式下保留：`let`、`package`、`public`、`interface` 等。
+- 保留字和关键字都不能用作标识符。
 
 ### 严格模式
 
-严格模式是一种不同的 JavaScript 解析和执行模型，可以通过 `use strict` 预处理指令启用严格模式：
+严格模式是一种不同的 JavaScript 解析和执行模型，它会使得 JavaScript 在更严格的条件下运行。在脚本中可以通过使用 `use strict` 预处理指令启用严格模式：
 
 ```javascript
 // 在 index.js 的开头
-"use strict";
+'use strict';
 
 // 在函数内部
 function sum(a, b) {
-  "use strict";
+  'use strict';
 }
 ```
