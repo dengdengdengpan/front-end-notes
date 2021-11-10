@@ -1,5 +1,9 @@
 # 变量
 
+![variable](./imgs/variable.png)
+
+
+
 ### 认识变量
 
 变量是指**用来保存任意值的命名占位符，变量不是值本身，它仅仅是一个用于存储任意值的容器**。比如，可以把变量想象成一个个装东西的盒子，盒子外边有一个唯一标注盒子名称的贴纸，盒子里面可以放入任何值。
@@ -61,9 +65,9 @@ let deviceStatusList;
 
 #### var
 
-##### 使用方式
+##### 用法
 
-使用 `var` 关键字后跟变量名可以声明一个变量：
+使用 `var` 后跟变量名可以声明一个变量：
 
 ```javascript
 var name;
@@ -215,9 +219,9 @@ fn();
 
 #### let
 
-##### 使用方式
+##### 用法
 
-使用 `let` 后跟变量名的方式可以声明一个拥有**块级作用域**的变量，并可选地将其初始化为一个值：
+使用 `let` 后跟变量名的方式可以声明一个拥有**块级**作用域的变量，并可选地将其初始化为一个值：
 
 ```javascript
 let name;
@@ -332,7 +336,7 @@ console.log(window.age); // 18
 
 ##### 没有变量提升
 
-**`let` 声明的变量没有“变量提升”**，它所声明的变量一定要在声明后使用，否则就会报错：
+**`let` 声明的变量没有“变量提升”**，它所声明的变量一定要在声明后使用，否则就报错：
 
 ```javascript
 console.log(name); // Uncaught ReferenceError: name is not defined
@@ -344,7 +348,7 @@ var age = 18;
 
 ##### 暂时性死区
 
-块级作用域中使用 `let` 声明的变量会绑定当前块，并从块的开始就形成封闭区域。在代码块内，`let`声明的变量直到它们的定义被执行时才**初始化**，在变量初始化前访问该变量都会导致 `ReferenceError`，这称为“暂时性死区”（TDZ，temporal dead zone）。
+块级作用域中使用 `let` 声明的变量会绑定当前块，并从块的开始就形成封闭区域。在代码块内，`let`声明的变量直到它们的定义被执行时才**初始化**，而在变量初始化前访问该变量都会导致 `ReferenceError`，这称为“暂时性死区”（TDZ，temporal dead zone）。
 
 ```javascript
 if (true) {
@@ -367,11 +371,11 @@ if (true) {
 }
 ```
 
-尽管同一行中 `price` 已经在词法环境中被创建了，但还没有到达它的初始化，因此此时 `price` 依旧在暂时性死区里，所以报错。
+尽管同一行中 `price` 已经在词法环境中被创建了，但还没有到达它的初始化，此时 `price` 依旧在暂时性死区里，因此报错。
 
 ##### for 循环中的 let
 
-如果 for 循环中的迭代变量是由 `var` 声明的，会出现一些不符合期望的场景：
+如果 for 循环中的迭代变量是由 `var` 声明的，常会出现一些不符合期望的场景：
 
 ```javascript
 const liTags = document.querySelectorAll('li'); // 假设有 5 个 li
@@ -384,7 +388,7 @@ for (var i = 0; i < liTags.length; i++) {
 // 实际打印出 5 5 5 5 5
 ```
 
-这是由于 `var` 声明的迭代变量 `i` 会渗透到循环体外边去成为全局作用域下的一个变量，所以循环时所有的变量 `i` 都是同一个变量。当点击 li 元素的操作时，循环早已退出，此时变量 `i` 保存的值是 5，因此点击时会打印同一个值。
+这是由于 `var` 声明的迭代变量 `i` 会渗透到循环体外边去成为全局作用域下的一个变量，循环时更改的所有变量 `i` 都是同一个变量。当点击 li 元素时，循环早已退出，此时变量 `i` 保存的值是 5，因此会打印同一个值。
 
 要想避免上面这种奇怪的现象，可以使用 `let` 声明迭代变量：
 
@@ -395,7 +399,60 @@ for (let i = 0; i < liTags.length; i++) {
 // 分别点击 li 时打印出 0 1 2 3 4
 ```
 
-使用 `let` 声明迭代变量时，JS 引擎会在后台为每个迭代循环声明一个新的迭代变量。因此在点击 li 时引用的都是不同的迭代变量实例，所以会打印出循环过程中每个迭代变量的值。
+使用 `let` 声明迭代变量时，JS 引擎会在后台为每个迭代循环声明一个新的迭代变量。因此点击 li 时引用的都是不同的迭代变量实例，所以打印的是循环执行过程中每个迭代变量的值。
 
-### const
+#### const
+
+##### 用法
+
+使用 `const` 后跟变量名的方式可以声明一个常量，在声明时就必须同时**初始化**该常量，否则就会报错。
+
+```javascript
+const age; // Uncaught SyntaxError: Missing initializer in const declaration
+```
+
+而且一旦声明，常量的值就不能改变，不然会导致运行时错误。
+
+```javascript
+const PI = 3.14;
+PI = 3.14159; // Uncaught TypeError: Assignment to constant variable
+```
+
+`const` 声明的变量的值不能改变的本质是**变量指向的内存地址中所保存的数据不得改动**。对基本类型的数据（字符串、数值、布尔值等），值就保存在变量所指向的内存地址中，所以值被改变时就会报错。对于复杂类型的数据（对象），变量指向的内存地址中保存的只是指向实际数据所在的指针。`const` 保证的是这个指针不变，但不保证这个指针所指向的数据结构不变。
+
+```javascript
+const ROLE = {};
+// 可以给 ROLE 添加属性
+ROLE.name = 'lufei';
+ROLE.age = 18;
+
+// 但将一个新对象赋值给 ROLE 就会报错
+ROLE = { name: 'namei', age: 15 }; // Uncaught TypeError: Assignment to constant variable
+```
+
+除此之外，`const` 和 `let` 声明的变量的行为基本相同，都具有不可重复声明、拥有块作用域、暂时性死区、没有变量提升等特性。
+
+```javascript
+// 不可重复声明
+var price = 10;
+const price = 20; // Uncaught SyntaxError: Identifier 'price' has already been declared
+
+// 块作用域
+const name = 'lufei';
+if (true) {
+  const name = 'suolong';
+  console.log('inside name', name); // inside name suolong
+}
+console.log('outside name', name); // outside name lufei
+
+// 暂时性死区
+if (true) {
+  console.log(age); // Uncaught ReferenceError: Cannot access 'age' before initialization
+  const age = 18;
+}
+```
+
+### 总结
+
+由于 `var` 来声明变量常会产生很多不合理的场景，所以不要再使用 `var` 来声明变量。然后 `const` 优先，`let` 次之。这是因为 `const` 声明可以保证变量的值不被改变，从而可以避免很多不合法的赋值操作。只有在提前知道未来会修改变量的值的情况下，再使用 `let`。
 
