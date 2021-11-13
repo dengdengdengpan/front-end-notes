@@ -10,6 +10,7 @@
 - [变量](./JavaScript/variable.md)
 - [数据类型](./JavaScript/data-type.md)
   - [Undefined 和 Null](./JavaScript/undefined-null.md)
+  - [Boolean](./JavaScript/boolean.md)
 
 ### Vue
 
