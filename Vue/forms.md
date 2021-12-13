@@ -1,6 +1,6 @@
 # 表单输入绑定
 
-表单输入是**双向数据绑定**中比较常见的应用场景，“双向”意味着用户操作视图发生改变时，其绑定的数据也随之改变，反之数据的变化也会导致视图发生相应变化。因此在表单交互较多的场景下，使用双向数据绑定可以省去监听每个表单数据变化的事件代码，从而达到简化代码专注于业务逻辑的目的。为此，Vue 提供了 `v-model` 指令用于在**表单控件**（`input`、`textarea`、 `select`）和**组件**上创建双向数据绑定。
+表单输入是**双向数据绑定**中比较常见的应用场景，“双向”意味着用户操作视图发生改变时，其绑定的数据也随之改变，反之数据的变化也会导致视图发生相应变化。因此在表单交互较多的场景下，使用双向数据绑定可以省去监听每个表单数据变化的事件代码，从而达到简化代码专注于业务逻辑的目的。而 Vue 提供了 `v-model` 指令用于在**表单控件**（`input`、`textarea`、 `select`）和**组件**上创建双向数据绑定。
 
 ### 表单控件
 
@@ -14,9 +14,9 @@
 
 ##### 文本
 
-```html
+```vue
 <template>
-	<div>
+  <div>
     <input v-model="message" >
     <button @click="message = '落霞与孤鹜齐飞'">修改 message</button>
     <p>message: {{ message }}</p>
@@ -40,7 +40,7 @@ export default {
 
 ##### 多行文本
 
-```html
+```vue
 <template>
   <div>
     <textarea v-model="comment"></textarea>
@@ -71,7 +71,7 @@ export default {
 
 - 单个复选框，默认绑定到**布尔值**，不用添加 `value` property：
 
-  ```html
+  ```vue
   <template>
     <div>
       <input v-model="checked" type="checkbox" id="single-checkbox">
@@ -98,7 +98,7 @@ export default {
 
 - 多个复选框，绑定到**同一个数组**，需要添加 `value` property：
 
-  ```html
+  ```vue
   <template>
     <div>
       <input v-model="checkedFruits" type="checkbox" value="apple" id="apple">
@@ -136,7 +136,7 @@ export default {
 
 需要在单选按钮中添加 `value` property：
 
-  ```html
+  ```vue
   <template>
     <div>
       <input v-model="favouriteFruit" type="radio" value="apple" id="apple">
@@ -171,7 +171,7 @@ export default {
 
 - 单选时：
 
-  ```html
+  ```vue
   <template>
     <div>
       <label for="favouriteFruit">最爱吃的水果：</label>
@@ -202,7 +202,7 @@ export default {
 
 - 多选时，绑定到一个数组：
 
-  ```html
+  ```vue
   <template>
     <div>
       <label for="fruits">爱吃的水果：</label>
@@ -235,7 +235,7 @@ export default {
 
 另外还可以使用 `v-for` 指令渲染动态 `<option>`：
 
-```html
+```vue
 <template>
   <div>
     <label for="favouriteFruit">最爱吃的水果：</label>
@@ -265,7 +265,7 @@ export default {
 
 1.  `v-model` 指令会忽略所有表单元素的 `value`、`checked`、`selected` attribute 的初始值，而总是将 Vue 实例的数据作为数据来源。
 
-   ```html
+   ```vue
    <template>
      <div>
        <label for="text">文本</label>
@@ -306,7 +306,7 @@ export default {
 
 2. 对于需要使用输入法（中文等）的语言，`v-model` 不会在输入法组合过程中得到更新。
 
-   ```html
+   ```vue
    <input v-model="message" type="text">
    <p>message: {{ message }}</p>
    ```
@@ -317,7 +317,7 @@ export default {
 
    可以看到在输入法组合文字的过程中，通过 `v-model` 绑定的 `message` property 不会自动更新。如果想处理这一过程，需要使用 `input` 事件。
 
-   ```html
+   ```vue
    <input v-model="message" type="text" @input="handleInput">
    
    <script>
@@ -344,7 +344,7 @@ export default {
 
 - 单选时，如果不想绑定到布尔值，可以使用 `true-value` property 和 `false-value` property：
 
-  ```html
+  ```vue
   <input v-model="toggle" type="checkbox" true-value="yes" false-value="no">
   <p>toggle: {{ toggle }}</p>
   ```
@@ -357,7 +357,7 @@ export default {
 
 - 多选时，可以使用 `v-bind` 将 `value` 绑定到一个动态的 property 上：
 
-  ```html
+  ```vue
   <template>
     <div>
       <!-- value 绑定到 option 上 -->
@@ -388,7 +388,7 @@ export default {
 
 ##### 单选按钮
 
-```html
+```vue
 <!-- value 绑定到一个对象的属性上 -->
 <input v-model="picked" type="radio" :value="role.name">
 ```
@@ -412,7 +412,7 @@ export default {
 
 使用 `.lazy` 修饰符会将输入框中 `v-model` 绑定的值的更新从的 `input` 事件转换为 `change` 事件：
 
-```html
+```vue
 <!-- change 事件会在输入框失去焦点后才触发 -->
 <input v-model.lazy="user1.username">
 <p>使用 .lazy: {{ user1 }}</p>
@@ -429,7 +429,7 @@ export default {
 
 使用 `.number` 修饰符通过 `parseFloat()` 函数可以自动将用户的输入值转为数值类型，如果无法被解析则返回输入的值：
 
-```html
+```vue
 <input v-model.number="user.password">
 <p>使用 .number: {{ user }}</p>
 ```
@@ -442,7 +442,7 @@ export default {
 
 使用 `.trim` 修饰符可以自动过滤用户输入的首尾空白字符：
 
-```html
+```vue
 <input v-model.trim="user1.username">
 <p>使用 .trim: {{ user1 }}</p>
 <input v-model="user2.username">
@@ -452,4 +452,95 @@ export default {
 结果：
 
 ![v-model-trim](./imgs/v-model-trim.gif)
+
+### `v-model` 原理
+
+当在文本输入框上使用 `v-model` 指令时：
+
+```vue
+<input v-model="message">
+```
+
+以上代码等价于：
+
+```vue
+<input
+  v-bind:value="message"
+  v-on:input="message = $event.target.value"
+>
+```
+
+`v-model` 本质上是 `v-bind:value` 和 `v-on:input` 结合的语法糖：
+
+- 通过 `v-bind` 绑定 `value` attribute 实现数据改变时输入框内容也随之改变。
+- 通过 `v-on` 监听 `input` 事件实现输入内容改变时数据也自动改变。
+
+### 在组件上使用 `v-model`
+
+当在一个自定义的文本组件上使用 `v-model` 时：
+
+```vue
+<my-input v-model="message"></my-input>
+```
+
+以上代码等价于：
+
+```vue
+<my-input
+  v-bind:value="message"
+  v-on:input="message = $event"
+>
+</my-input>
+```
+
+要想让这个组件上的 `v-model` 指令起作用，根据 `v-model` 原理需要对该组件内的 `<input>` 做以下操作：
+
+1. 将 `value` attribute 通过 `v-bind` 绑定到一个名为 `value` 的 prop 上。
+2. 在 `input` 事件被触发时通过自定义的 `input` 事件将新的值抛出。
+
+在 MyInput.vue 中的代码：
+
+```vue
+<template>
+  <input v-bind:value="value" v-on:input="onInput" class="my-input">
+</template>
+
+<script>
+export default {
+  name: 'MyInput',
+  props: {
+    value: {
+      type: String
+    }
+  },
+  methods: {
+    onInput (event) {
+      this.$emit('input', event.target.value)
+    }
+  }
+}
+</script>
+
+<style scoped>
+.my-input {
+  caret-color: red;
+}
+</style>
+```
+
+然后引入 MyInput 组件并使用：
+
+```vue
+<template>
+  <div>
+    <my-input v-model="message" />
+    <p>message: {{ message }}</p>
+    <button type="button" @click="message = '落霞与孤鹜齐飞'">修改 message</button>
+  </div>
+</template>
+```
+
+结果：
+
+![v-model-my-input](./imgs/v-model-my-input.gif)
 
