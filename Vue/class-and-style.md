@@ -2,7 +2,7 @@
 
 ![class-and-style](./imgs/class-and-style.png)
 
-在使用 Vue 开发项目时，经常会有操作元素 `class` 和 `style` 的需求。比如，开发组件时会使用计算属性根据不同的 props 添加相应的 class，从而在组件上应用不同的样式。
+在使用 Vue 开发时，经常会有操作元素 `class` 和 `style` 的需求。比如，开发组件时常会使用计算属性来根据不同的 props 添加对应的 class，从而在组件上应用不同的样式。
 
 > 因为 `class` 和 `style` 都是 HTML attribute，所以可以通过 `v-bind` 进行处理：只需要绑定的表达式计算出字符串结果即可。不过，字符串拼接麻烦且容易出错。因此，`v-bind` 在用于 `class` 和 `style` 时，Vue 做了专门的增强，表达式结果的类型除了字符串，还可以是对象和数组。
 
@@ -10,7 +10,7 @@
 
 ##### 字符串语法
 
-`v-bind:class` 绑定表达式的计算结果可以是字符串：
+`v-bind:class` 绑定的表达式的计算结果可以是字符串：
 
 ```vue
 <template>
@@ -28,11 +28,11 @@ export default {
 </script>
 ```
 
-渲染结果如下：
+结果：
 
 ![vue-class-1](./imgs/class-1.png)
 
-使用字符串语法也可以绑定多个 class：
+还可以绑定多个 class：
 
 ```vue
 <template>
@@ -50,7 +50,7 @@ export default {
 </script>
 ```
 
-结果渲染如下图：
+结果：
 
 ![vue-class-2](./imgs/class-2.png)
 
@@ -73,11 +73,11 @@ export default {
 </script>
 ```
 
-在页面中使用按钮组件后渲染结果如下：
+在使用按钮组件后：
 
 ![vue-class-3](./imgs/class-3.png)
 
-**`v-bind:class` 指令也可以与普通的 class attribute 共存**，有如下模板：
+**`v-bind:class` 指令也可以与普通的 class attribute 共存**：
 
 ```vue
 <template>
@@ -85,7 +85,7 @@ export default {
 </template>
 ```
 
-结果渲染如下图：
+结果：
 
 ![vue-class-4](./imgs/class-4.png)
 
@@ -99,11 +99,11 @@ export default {
 </template>
 ```
 
-上述代码中 `active` class 是否存在取决于数据 property `isActive` 值的真假。比如，当 `isActive` 值为真时，渲染结果如下：
+`active` class 是否存在取决于 `isActive` property 值的真假。比如，当 `isActive` 值为真时：
 
 ![vue-class-5](./imgs/class-5.png)
 
-我们也可以在对象中传入更多的字段来**动态**切换多个 class。并且，绑定 class 的对象语法也可以和普通的 class attribute 共存。比如，有如下模板：
+还可以在对象中传入更多的字段来**动态**切换多个 class。并且，绑定 class 的对象语法也可以和普通的 class attribute 共存。比如，有如下模板：
 
 ```vue
 <template>
@@ -124,11 +124,11 @@ export default {
 </script>
 ```
 
-渲染结果如下：
+结果：
 
 ![vue-class-object-6](./imgs/class-6.png)
 
-当数据对象中 `isActive`、`isDisabled`、`isLoading` 有变化时，class 列表会动态更新。当有如下修改时：
+当 data 中 `isActive`、`isDisabled`、`isLoading` 有变化时，class 列表会作相应地更新：
 
 ```vue
 <script>
@@ -144,11 +144,11 @@ export default {
 </script>
 ```
 
-元素的 class 列表将会自动更新，结果如下：
+结果：
 
 ![vue-class-object-2](./imgs/class-7.png)
 
-使用对象语法绑定 class 时，可以将对象放在 data 中，而不必将对象内联在模板里：
+在使用对象语法绑定 class 时，可以将对象放在 data 中，而不必将对象内联在模板里，这会让模板更加清晰：
 
 ```vue
 <template>
@@ -170,11 +170,11 @@ export default {
 </script>
 ```
 
-渲染结果如下：
+结果：
 
 ![vue-class-object-6](./imgs/class-6.png)
 
-在 `v-bind:class` 中也可以绑定一个返回对象的计算属性，这是一种更常用且更强大的模式：
+还可以在 `v-bind:class` 中绑定一个返回对象的计算属性，这是一种更常用且更强大的模式：
 
 ```vue
 <template>
@@ -225,11 +225,11 @@ export default {
 </script>
 ```
 
-渲染结果如下：
+结果：
 
 ![vue-class-8](./imgs/class-8.png)
 
-如果要在数组语法中根据条件切换不同的 class，可以使用三元表达式：
+如果想在数组中根据条件切换不同的 class，可以使用三元表达式：
 
 ```vue
 <template>
@@ -237,9 +237,9 @@ export default {
 </template>
 ```
 
-`active` class 是否存在取决于data 中 `isActive` property 值的真假。
+`active` class 是否存在取决于 data 中 `isActive` property 值的真假。
 
-此外，我们也可以在数组语法中使用字符串语法、对象语法。并且，绑定一个返回数组的计算属性，这是一种更常用且更强大的模式：
+此外，我们也可以在数组中使用字符串语法、对象语法。并且，绑定一个返回数组的计算属性，这是一种更常用且更强大的模式：
 
 ```vue
 <template>
@@ -301,7 +301,7 @@ export default {
 <my-component class="xxx" :class="[{ active: isActive }, 'yyy']" />
 ```
 
-如果 `isActive` 的值为真，那么渲染结果如下图：
+当 `isActive` 的值为真：
 
 ![vue-class-9](./imgs/class-9.png)
 
@@ -309,7 +309,7 @@ export default {
 
 ##### 字符串语法
 
-`v-bind:style` 绑定的表达式计算结果可以是字符串，用以在元素上添加内联样式。同时，`v-bind:style` 可以和普通的 style attribute 共存，有如下模板：
+`v-bind:style` 绑定的表达式计算结果可以是字符串，用以在元素上添加内联样式。同时，`v-bind:style` 和普通的 style attribute 可以共存：
 
 ```vue
 <template>
@@ -328,13 +328,13 @@ export default {
 </script>
 ```
 
-结果渲染如下图：
+结果：
 
 ![vue-style-1](./imgs/style-1.png)
 
 ##### 对象语法
 
-绑定 style 时，可以传给 `v-bind:style` 一个对象，用以添加内联样式。在这个对象中，CSS property 名可以使用驼峰式或者短横线分隔（用引号括起来）来命名，有如下模板：
+绑定 style 时，可以传给 `v-bind:style` 一个对象，用以添加内联样式。在这个对象中，CSS property 名可以使用驼峰式或者短横线分隔（用引号括起来）来命名：
 
 ```vue
 <template>
@@ -353,7 +353,7 @@ export default {
 </script>
 ```
 
-渲染结果如下：
+结果：
 
 ![vue-style-2](./imgs/style-2.png)
 
@@ -394,7 +394,7 @@ export default {
   computed: {
     styleObj () {
       const { ratio } = this
-      const iconColor = ratio.includes('-') ? '#ff4d4f' : '#a0d911'
+      const iconColor = ratio.includes('-') ? 'red' : 'green'
       return {
         color: iconColor
       }
@@ -429,6 +429,6 @@ export default {
 </script>
 ```
 
-渲染结果如下：
+结果：
 
 ![vue-style-3](./imgs/style-3.png)
