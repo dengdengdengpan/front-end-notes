@@ -472,10 +472,12 @@ export default {
 
 `v-model` 本质上是 `v-bind:value` 和 `v-on:input` 结合的语法糖：
 
-- 通过 `v-bind` 绑定 `value` attribute 实现数据改变时输入框内容也随之改变。
-- 通过 `v-on` 监听 `input` 事件实现输入内容改变时数据也自动改变。
+- 通过 `v-bind` 绑定 `value` attribute 实现数据变化时输入框内容也随之变化。
+- 通过 `v-on` 监听 `input` 事件实现输入内容改变时绑定的数据也随之改变。
 
 ### 在组件上使用 `v-model`
+
+##### 自定义组件的 `v-model`
 
 当在一个自定义的文本组件上使用 `v-model` 时：
 
@@ -498,7 +500,7 @@ export default {
 1. 将 `value` attribute 通过 `v-bind` 绑定到一个名为 `value` 的 prop 上。
 2. 在 `input` 事件被触发时通过自定义的 `input` 事件将新的值抛出。
 
-在 MyInput.vue 中的代码：
+MyInput 组件：
 
 ```vue
 <template>
@@ -515,7 +517,8 @@ export default {
   },
   methods: {
     onInput (event) {
-      this.$emit('input', event.target.value)
+      const { target: { value } } = event 
+      this.$emit('input', value)
     }
   }
 }
@@ -528,7 +531,7 @@ export default {
 </style>
 ```
 
-然后引入 MyInput 组件并使用：
+引入并使用 MyInput 组件：
 
 ```vue
 <template>
@@ -540,7 +543,90 @@ export default {
 </template>
 ```
 
-结果：
+这里 `message` 的值将会传给 `value` prop；同时当 MyInput 组件触发 `input` 事件时会将新的值抛出，此时 `message` property 会被更新：
 
 ![v-model-my-input](./imgs/v-model-my-input.gif)
 
+##### `model`
+
+默认情况下，一个组件上的 `v-model` 会把 `value` 用作 `prop` 并且会把 `input` 用作 event。但对于复选框、单选框这些表单控件，`value` 有其它作用——在提交表单时  `value` 和 `name` 会一起被提交到服务器。而使用 `model` 选项可以避免这些冲突，**`model` 选项允许自定义组件在使用 `v-model` 时定制 prop 和 event**。例如，创建一个 MyCheckbox 组件：
+
+```vue
+<template>
+  <input :checked="checked" @change="onChange" type="checkbox" class="my-checkbox">
+</template>
+
+<script>
+export default {
+  name: 'MyCheckbox',
+  // 定制 prop 和 event
+  model: {
+    prop: 'checked',
+    event: 'change'
+  },
+  props: {
+    checked: {
+      type: Boolean,
+      default: false
+    }
+  },
+  methods: {
+    onChange (event) {
+      const { target: { checked } } = event
+      this.$emit('change', checked)
+    }
+  }
+}
+</script>
+
+<style scoped>
+.my-checkbox {
+  height: 16px;
+  width: 16px;
+  margin: 0;
+  background-color: lightgray;
+  color: white;
+  cursor: pointer;
+  appearance: none;
+}
+
+.my-checkbox:checked {
+  background-color: #42b983;
+}
+
+.my-checkbox::after {
+  content: "";
+  display: none;
+  position: relative;
+  left: 32%;
+  top: 10%;
+  width: 25%;
+  height: 50%;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.my-checkbox:checked::after {
+  display: block;
+}
+</style>
+```
+
+引入 MyCheckbox 组件：
+
+```vue
+<template>
+  <div>
+    <my-checkbox v-model="choosed" />
+    <p>choosed: {{ choosed }}</p>
+    <button type="button" @click="choosed = !choosed">toggle</button>
+  </div>
+</template>
+```
+
+这里 `choosed` 的值将会传给名为 `checked` 的 prop；同时当 MyCheckbox 触发 `change` 事件时会抛出新的值，此时 `choosed` property 会被更新：
+
+![v-model-my-checbox](./imgs/v-model-my-checbox.gif)
+
+##### xxx
