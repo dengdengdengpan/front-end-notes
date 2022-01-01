@@ -1,5 +1,7 @@
 # 表单输入绑定
 
+![forms](./imgs/forms.png)
+
 表单输入是**双向数据绑定**中比较常见的应用场景，“双向”意味着用户操作视图发生改变时，其绑定的数据也随之改变，反之数据的变化也会导致视图发生相应变化。因此在表单交互较多的场景下，使用双向数据绑定可以省去监听每个表单数据变化的事件代码，从而达到简化代码专注于业务逻辑的目的。而 Vue 提供了 `v-model` 指令用于在**表单控件**（`input`、`textarea`、 `select`）和**组件**上创建双向数据绑定。
 
 ### 表单控件
@@ -547,7 +549,7 @@ export default {
 
 ![v-model-my-input](./imgs/v-model-my-input.gif)
 
-##### `model`
+##### `model` 选项
 
 默认情况下，一个组件上的 `v-model` 会把 `value` 用作 `prop` 并且会把 `input` 用作 event。但对于复选框、单选框这些表单控件，`value` 有其它作用——在提交表单时  `value` 和 `name` 会一起被提交到服务器。而使用 `model` 选项可以避免这些冲突，**`model` 选项允许自定义组件在使用 `v-model` 时定制 prop 和 event**。例如，创建一个 MyCheckbox 组件：
 
@@ -628,5 +630,3 @@ export default {
 这里 `choosed` 的值将会传给名为 `checked` 的 prop；同时当 MyCheckbox 触发 `change` 事件时会抛出新的值，此时 `choosed` property 会被更新：
 
 ![v-model-my-checbox](./imgs/v-model-my-checbox.gif)
-
-##### xxx
