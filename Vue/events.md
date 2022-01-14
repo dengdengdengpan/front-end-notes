@@ -4,24 +4,25 @@
 
 ### 监听事件
 
-Vue 使用 `v-on` 指令来监听 DOM 事件，并在触发事件时执行一些 JavaScript。`v-on` 指令绑定的表达式的值可以有以下几种：
+Vue 使用 `v-on` 指令来监听 DOM 事件，在触发事件时会执行一些 JavaScript，可以通过以下方式来监听事件：
 
-##### 简单的表达式
+##### 简单表达式
 
-对于比较简单的逻辑可以作为一个表达式直接写在模板里：
+对于比较简单的逻辑可以直接写在模板里：
 
 ```vue
 <template>
   <div class="event-demo">
-    <button v-on:click="visible = !visible">toggle</button>
-    <p v-show="visible">click to toggle</p>
+    <button v-on:click="visible = !visible; message = '落霞与孤鹜齐飞';">toggle</button>
+    <p v-show="visible">toggle-modify</p>
+    <p>message: {{ message }}</p>
   </div>
 </template>
 ```
 
 ##### 方法名
 
-不过大多数的事件处理逻辑都较为复杂，如果直接写在模板里会导致模板过重且难以维护。然而 `v-on` 指令可以接收一个需要调用的方法名，所以可以将事件处理逻辑放在该方法内：
+大多数的事件处理逻辑都较为复杂，如果直接写在模板里会导致模板过重且难以维护。`v-on` 指令可以接收一个需要调用的方法名，因此可以将事件处理逻辑放在该方法内：
 
 ```vue
 <template>
@@ -62,7 +63,7 @@ export default {
 
 ##### 内联语句中调用方法
 
-除了绑定一个方法，还可以在内联的 JavaScript 语句中调用方法：
+除了绑定一个方法名，还可以在内联的 JavaScript 语句中直接调用方法：
 
 ```vue
 <template>
@@ -73,7 +74,7 @@ export default {
 </template>
 ```
 
-在调用方法时，还可以传入自定义的参数：
+在调用方法时，可以传入自定义的参数：
 
 ```vue
 <template>
@@ -137,14 +138,14 @@ export default {
 <div v-on:scroll="onScroll">...</div>
 ```
 
-用在自定义元素组件上时，也可以监听子组件触发的**自定义事件**：
+用在自定义元素组件上时，可以监听子组件触发的**自定义事件**：
 
 ```html
-<!-- 当子组件触发自定义的 my-event 事件时调用 handleThis  -->
-<base-component v-on:my-event="handleThis"></base-component>
+<!-- 当子组件触发自定义的 my-event 事件时调用 handleMyEvent  -->
+<base-component v-on:my-event="handleMyEvent"></base-component>
 
 <!-- 内联语句 -->
-<base-component v-on:my-event="handleThis('test', $event)"></base-component>
+<base-component v-on:my-event="handleMyEvent('test', $event)"></base-component>
 
 <!-- 组件中的原生事件，使用 .native 修饰符 -->
 <base-component v-on:click.native="onClick"></base-component>
@@ -162,11 +163,11 @@ export default {
 
 ### 修饰符
 
-修饰符是以 `.` 开头作为指令的后缀来表示的，用于指出一个指令应该以特殊方式绑定。`v-on` 指令在监听事件时，用到的修饰符有以下几类：事件修饰符、按键修饰符、系统修饰符。
+修饰符是以 `.` 开头作为指令的后缀来表示的，用于指出一个指令应该以特殊方式绑定。`v-on` 指令在监听事件时，用到的修饰符有以下几类：事件修饰符、按键修饰符以及处理系统修饰键的修饰符。
 
 ##### 事件修饰符
 
-在事件处理逻辑中调用 `event.preventDefault()` 或 `event.stopPropagation()` 是非常常见的需求。虽然可以在事件处理方法中添加它们，但是更好的方式是：方法只是纯粹的数据逻辑，而不是去处理 DOM 事件细节。为解决该问题，Vue 为 `v-on` 指令提供了以下事件修饰符：
+调用 `event.preventDefault()` 或 `event.stopPropagation()` 是事件处理逻辑中很常见的需求。尽管可以在事件处理方法中添加它们，但是更好的方式是：方法只是纯粹的数据逻辑，而不是去处理 DOM 事件细节。为此，Vue 为 `v-on` 指令提供了以下事件修饰符：
 
 - `.stop`
 - `.prevent`
@@ -175,8 +176,6 @@ export default {
 - `.once`
 - `.passive`
 
-例如：
-
 ```html
 <!-- 阻止单击事件继续传播 -->
 <a @click.stop>GitHub</a>
@@ -184,7 +183,7 @@ export default {
 <!-- 阻止 a 元素的默认跳转行为，没有表达式 -->
 <a @click.prevent>GitHub</a>
 
-<!-- 阻止 a 元素的默认跳转行为并在点击时调用 doSomeThing 方法 -->
+<!-- 阻止 a 元素的默认跳转行为并在触发点击时调用 doSomeThing 方法 -->
 <a @click.prevent="doSomeThing">GitHub</a>
 
 <!-- 修饰符可以串联 -->
@@ -204,7 +203,7 @@ export default {
 <!-- addEventListener 中的 passive 选项 -->
 <!-- 滚动事件的默认行为 (即滚动行为) 将会立即触发 -->
 <!-- 而不会等待 `onScroll` 完成 -->
-<!-- 这其中包含 `event.preventDefault()` 的情况 -->
+<!-- 以防止其中包含 `event.preventDefault()` 的情况 -->
 <div @scroll.passive="onScroll">...</div>
 ```
 
@@ -219,7 +218,7 @@ export default {
 <input @keyup.enter="handleSubmit" />
 ```
 
-还可以直接将 [KeyboardEvent.key](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values) 暴露的任意有效按键名转换为 kebab-case 来作为修饰符，例如：
+还可以直接将 [KeyboardEvent.key](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values) 暴露的任意有效按键名转换为 kebab-case 来作为修饰符：
 
 ```html
 <!-- onPageDown 方法只会在按键是 PageDown 时被调用 -->
@@ -238,7 +237,8 @@ export default {
 - `.left`
 - `.right`
 
-##### 系统修饰符
+##### 系统修饰键
+> 修饰键在计算机领域指电脑键盘上的一些用于组合按键的特殊按键。在修饰键被按压的同时按下另一个键会指向该键的非默认动作。只按下修饰键一般不执行任何动作。举例来说，大多数键盘布局中以 Shift 键组合的 ⇧Shift+A 将输出大写字母 A。
 
 可以用以下修饰符来实现仅在按下相应按键时才触发鼠标或键盘事件的监听器：
 
@@ -265,7 +265,7 @@ export default {
   <button @click.exact="onClick">按钮</button>
   ```
 
-- 鼠标按钮修饰符：`.right`、`.left`、`.middle`，例如：
+- 鼠标按钮修饰符：`.right`、`.left`、`.middle`，它们会限制处理函数仅响应特定的鼠标按钮：
 
   ```html
   <!-- 鼠标右键点击时触发 -->
