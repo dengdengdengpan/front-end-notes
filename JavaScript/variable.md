@@ -14,7 +14,7 @@ let b = true;
 let c = 35;
 ```
 
-变量 `a` 想象成一个贴着“a“贴纸的盒子，盒子里面放着字符串值 `Bob`；变量 `b` 想象成一个贴着“b“贴纸的盒子，盒子里面放着布尔值 `ture`；变量 `c` 想象成一个贴着“c“贴纸的盒子，盒子里面放着数值 `35`。
+变量 `a` 可以想象成一个贴着“a“贴纸的盒子，盒子里面放着字符串值 `Bob`；变量 `b` 可以想象成一个贴着“b“贴纸的盒子，盒子里面放着布尔值 `ture`；变量 `c` 可以想象成一个贴着“c“贴纸的盒子，盒子里面放着数值 `35`。
 
 ![variable-box](./imgs/variable-box.png)由于 JavaScript 中的变量具有**松散类型**的特点（即变量的值和值的数据类型在脚本的生命周期内都可以改变)，所以可以多次更改盒子里面的值及其类型。
 
@@ -28,7 +28,7 @@ a = true; // 变量 a 的数据类型从 Number 改变为 Boolean
 
 变量作为标识符之一，其命名需要遵守一定的规则：
 
-- 变量名只能包含字母、数字、下划线（_）或美元符号（$），且不能以数字开头。
+- 变量名只能包含字母、下划线（_）、美元符号（$）、数字，且不能以数字开头。
 - 关键字、保留字、`true`、`false`、`null` 不能用作变量名。
 - 由于 JavaScript 使用了 **Unicode** 字符集，所以可以使用 Unicode 中的字母字符。比如，中文也是合法的变量名。
 
@@ -73,20 +73,20 @@ let deviceStatusList;
 var name;
 ```
 
-这里声明了一个名为 `name` 的变量，可以用它保存任意类型的值。不过，在没有初始化的情况下，变量会保存一个特殊值 `undefined`。
+这里声明了一个名为 `name` 的变量，可以用它保存任意类型的值。在没有初始化的情况下，变量会保存一个特殊值 `undefined`。
 
 ```javascript
 var message;
 console.log(message); // undefined
 ```
 
-JS 也支持变量初始化，可以在声明变量时通过赋值操作符 `=` 为变量设置初始值：
+JS 也支持变量初始化，在声明变量时可以通过赋值操作符 `=` 为变量设置初始值：
 
 ```javascript
 var name = 'lufei';
 ```
 
-此时 `name` 是一个保存了字符串值 `lufei` 的变量，它的过程如下：
+此时 `name` 是一个保存了字符串值 `lufei` 的变量：
 
 ```javascript
 var name; // var 告诉 JS 引擎，要声明一个变量 name
@@ -141,7 +141,7 @@ console.log(a); // true
   console.log(a); // Uncaught ReferenceError: a is not defined
   ```
 
-  不过，如果在函数内声明变量时省略 `var` 关键字，并且函数内也无该变量，那么该变量会被隐式地创建为全局变量。
+  但如果在函数内声明变量时省略 `var` 关键字，并且函数内也无该变量，那么该变量会被隐式地创建为全局变量。
 
   ```javascript
   // 函数内无该变量
@@ -166,7 +166,7 @@ console.log(a); // true
 
 ##### 变量提升
 
-使用 `var` 声明的变量无论出现在什么地方，总是会被"移动"到了当前作用域的最顶端，从而可以在声明该变量之前就能使用变量，这个行为叫做**变量提升**。
+使用 `var` 声明的变量无论出现在什么地方，总是会被"移动"到当前作用域的最顶端，从而可以在声明该变量之前就能使用变量，这个行为叫做**变量提升**。
 
 ```javascript
 console.log(name); // 控制台没有报错并打印出 undefined
@@ -184,7 +184,7 @@ name = 'lufei'; // 对变量 name 进行赋值操作
 
 这样就产生了“变量提升”的效果，但实际上变量在代码中的位置是不会被移动的，所以这里的“提升”并非字面意思。这里需要一些背景知识：
 
-> JavaScript 作为一种即时编译型的编程语言，任何的 JavaScript 代码片段在执行前都要进行编译——大部分情况编译就发生在代码执行前的几微秒（甚至更短）的时间内。
+> JavaScript 作为一种即时编译型的编程语言，任何的 JavaScript 代码片段在执行前都要进行编译，并且大部分编译就发生在代码执行前的几微秒（甚至更短）的时间内。
 
 因此，**`var` 声明的变量会在代码被执行前提前被编译器处理**。对于 `var name = 'lufei';` 这个语句，JavaScript 会将其看作两个部分：
 
@@ -237,10 +237,10 @@ let name = 'lufei',
 
 ##### 不可重复声明
 
-`let` 不允许在相同作用域内，重复声明同一个变量：
+`let` 不允许在相同作用域内重复声明同一个变量：
 
 ```javascript
-// var let 都声明同一个变量也会报错
+// var let 声明同一个变量会报错
 var name = 'lufei';
 let name = 'test'; // Uncaught SyntaxError: Identifier 'name' has already been declared
 
@@ -264,13 +264,13 @@ function fn() {
   let a = 8; // Uncaught SyntaxError: Identifier 'a' has already been declared
 }
 
-// 不能在函数内部重新声明元素
+// 不能在函数内部重新声明变量
 function sum(a, b) {
   let a = 10; // Uncaught SyntaxError: Identifier 'a' has already been declared
 }
 ```
 
-由于 JS 引擎会记录变量名及其所在的块作用域，因此嵌套使用相同的变量名并不会报错，因为它们处在不同的作用域中：
+由于 JS 引擎会记录变量名及其所在的块作用域，因此嵌套使用相同的变量名不会报错，因为它们处在不同的作用域中：
 
 ```javascript
 switch(x) {
@@ -336,7 +336,7 @@ console.log(window.age); // 18
 
 ##### 没有变量提升
 
-**`let` 声明的变量没有“变量提升”**，它所声明的变量一定要在声明后使用，否则就报错：
+**`let` 声明的变量没有“变量提升”**，它所声明的变量一定要在声明后使用，否则就会报错：
 
 ```javascript
 console.log(name); // Uncaught ReferenceError: name is not defined
@@ -363,7 +363,7 @@ if (true) {
 
 上面代码中，在 `let` 声明 `name` 之前都属于变量 `name` 的死区。
 
-另外，由于词法作用域，表达式 `(price + 20)` 里的变量 `price` 被认为是 `if` 块的变量：
+另外，根据词法作用域，表达式 `(price + 20)` 里的变量 `price` 被认为是 `if` 块的变量：
 
 ```javascript
 if (true) {
@@ -405,7 +405,7 @@ for (let i = 0; i < liTags.length; i++) {
 
 ##### 用法
 
-使用 `const` 后跟变量名的方式可以声明一个常量，在声明时就必须同时**初始化**该常量，否则就会报错。
+使用 `const` 后跟变量名的方式可以声明一个常量，在声明时就必须**初始化**该常量，否则就会报错。
 
 ```javascript
 const age; // Uncaught SyntaxError: Missing initializer in const declaration
