@@ -12,15 +12,15 @@ const request = new XMLHttpRequest();
 
 ### 属性
 
-##### XMLHttpRequest.readyState(只读)
+##### readyState(只读)
 
-`readyState` 属性返回一个整数用于表示当前实例所处的状态，它可能返回以下值：
+`readyState` 属性返回一个整数，表示当前实例所处的状态，它可能返回以下值：
 
 - 0 - UNSET：已创建 `XMLHttpRequest` 实例，但还未调用 `open()` 方法。
-- 1 - OPENED：`open()` 方法已经调用，但 `send()` 方法还未调用。在这个状态下还可以调用 `setRequestHeader()` 方法设置请求头信息。
-- 2 - HEADERS_RECEIVED：`send()` 方法已经调用，并且已经接收到响应头信息。
-- 3 - LOADING：正在接收服务器返回数据的 body 部分。此时，如果 `responseType` 属性是 `text` 或空字符串，那么 `responseText` 属性会包含已经收到的部分信息。
-- 4 - DONE：本次请求已经完成，这表示服务器返回的数据已经完全接收或者完成失败。
+- 1 - OPENED：`open()` 方法已经调用，但还未调用 `send()` 方法。在这个状态下，可以通过 `setRequestHeader()` 方法设置请求头信息。
+- 2 - HEADERS_RECEIVED：`send()` 方法已经被调用，并且已经接收到响应头信息。
+- 3 - LOADING：正在接收服务器响应的 body 部分。此时，如果 `responseType` 属性是 `text` 或空字符串，那么 `responseText` 属性会包含已经收到的部分信息。
+- 4 - DONE：本次请求已经完成，这意味着服务器返回的数据已经完全接收或者完成失败。
 
 每当实例的状态发生变化，`readyState` 属性的值都会改变，并会触发 `readyStateChange` 事件：
 
@@ -33,11 +33,11 @@ request.onreadystatechange = () => {
 request.send();
 ```
 
-##### XMLHttpRequest.response(只读)
+##### response(只读)
 
-`response` 属性表示服务器返回响应中的 body 部分，它可以任何类型的数据类型，比如二进制对象、字符串、对象等，具体的数据类型由 `responseType` 决定。
+`response` 属性返回服务器响应的 body 部分，它可以是任何类型的数据类型，比如二进制对象、字符串、对象等，具体的数据类型由 `responseType` 决定。
 
-如果请求尚未完成或未成功，则 `response` 属性的值为 `null`。但如果 `responseType` 属性是 `text` 或空字符串，在 `readyState` 等于 3 的状态下——即请求未结束之前，`response` 属性会包含服务器已经返回的部分数据。
+如果请求尚未完成或未成功，则 `response` 属性的值为 `null`。但如果 `responseType` 属性是 `text` 或空字符串，在 `readyState` 等于 3 的状态下——即请求尚未结束前，`response` 属性会包含服务器已经返回的部分数据。
 
 ```javascript
 const request = new XMLHttpRequest();
@@ -51,15 +51,15 @@ request.onload = () => {
 request.send();
 ```
 
-##### XMLHttpRequest.responseText(只读)
+##### responseText(只读)
 
-`responseText` 属性返回从服务器接收到的文本数据，它只有在请求成功接收完数据后才包含完整的数据。
+`responseText` 属性返回从服务器接收到的文本数据，它只有在请求成功接收完数据后才会包含完整的数据。
 
-##### XMLHttpRequest.responseXML(只读)
+##### responseXML(只读)
 
 `responseXML` 属性返回从服务器接收到的 HTML 或 XML 文档对象。如果请求没有成功，或尚未发送，或接收到的数据不能被解析成 HTML 或 XML，则为 `null`。
 
-要想获取正常的 `responseXML` 需要将服务器返回响应头中的 `Content-Type` 属性设置为 `text/xml` 或者`aplication/xml`，并在发送请求前，需要将 `responseType` 属性设置为 `document`。如果服务器未指明 `Content-Type` 是 `text/xml` 还是 `application/xml`， 则可以使用 `overrideMimeType()` 方法强制解析为 XML。
+要想获取正常的 `responseXML` 需要将服务器响应头中的 `Content-Type` 属性设置为 `text/xml` 或者`aplication/xml`，并在发送请求前，需要将 `responseType` 属性设置为 `document`。如果服务器未指明 `Content-Type` 为 `text/xml` 或 `application/xml`， 可以使用 `overrideMimeType()` 方法强制解析为 XML。
 
 ```javascript
 const request = new XMLHttpRequest();
@@ -76,9 +76,9 @@ request.onload = () => {
 request.send();
 ```
 
-##### XMLHttpRequest.responseURL(只读)
+##### responseURL(只读)
 
-`responseURL` 属性返回发送数据的服务器的网址。如果网址中包含锚点，则该属性将会移除锚点；如果服务器端发生跳转，则该属性返回的是最后实际返回数据的网址。
+`responseURL` 属性返回发送数据的服务器的网址。如果网址中包含锚点，则该属性会将锚点移除；如果服务器端发生跳转，则该属性返回的是最后实际返回数据的网址。
 
 ```javascript
 const request = new XMLHttpRequest();
@@ -89,9 +89,9 @@ request.onload = () => {
 request.send();
 ```
 
-##### XMLHttpRequest.responseType
+##### responseType
 
-`responseType` 属性是一个字符串，用于表示服务器返回数据的类型。`responseType` 是可写的，可以在 `open()` 方法之后、`send()` 方法之前设置它的值，用以告诉浏览器如何解析返回的数据。它可以采用以下值：
+`responseType` 属性是一个字符串，表示服务器返回数据的类型。`responseType` 是可写的，可以在 `open()` 方法之后、`send()` 方法之前设置它的值，用以告诉浏览器如何解析返回的数据。它可以采用以下值：
 
 - `''`：空字符串等同于默认类型 `text`，表示服务器返回的是文本数据。
 - `arraybuffer`：表示服务器返回的是包含二进制数组数据的 ArrayBuffer 对象。
@@ -116,7 +116,7 @@ request.onload = () => {
 request.send();
 ```
 
-示例二，设置为 `jons` 来获取响应：
+示例二，设置为 `json` 来获取响应：
 
 ```javascript
 const request = new XMLHttpRequest();
@@ -131,9 +131,9 @@ request.onload = () => {
 request.send();
 ```
 
-##### XMLHttpRequest.status(只读)
+##### status(只读)
 
-`status` 属性返回一个整数用于表示服务器响应的状态码。在请求完成前，或者请求出错，`status` 属性的值都是 0。如果请求成功或者服务器没有返回状态码，`status` 属性的值都是 200。常见的 HTTP 状态码如下：
+`status` 属性返回一个整数，表示服务器响应的状态码。在请求完成前，或请求出错，`status` 属性的值都是 0。如果请求成功或服务器没有返回状态码，`status` 属性的值都是 200。常见的 HTTP 状态码如下：
 
 - 200 - OK，请求成功。
 - 301 - Moved Permanently，永久移动。
@@ -158,13 +158,13 @@ request.onload = () => {
 };
 ```
 
-##### XMLHttpRequest.statusText(只读)
+##### statusText(只读)
 
-`statusText` 属性返回一个字符串用于表示服务器响应的状态信息。如果请求处于调用 `send()` 方法之前，则该属性的值是空字符串；如果服务器没有返回状态信息，则该属性默认为 `OK`。
+`statusText` 属性返回一个字符串，表示服务器响应的状态信息。如果请求处于调用 `send()` 方法之前，则该属性的值是空字符串；如果服务器没有返回状态信息，则该属性默认为 `OK`。
 
-##### XMLHttpRequest.timeout
+##### timeout
 
-`timeout` 属性是一个整数，表示一个请求在被自动终止前所消耗的毫秒数。默认值为 0，表示没有超时。当超时发生时，`timeout` 事件就会被触发。
+`timeout` 属性是一个整数，用于设置多少毫秒后，如果请求仍未得到结果，就会自动终止。默认值为 0，表示没有超时。当超时发生时，`timeout` 事件就会被触发。
 
 ```javascript
 const request = new XMLHttpRequest();
@@ -175,9 +175,9 @@ request.send();
 
 另外，`timeout` 属性不能用于同步请求中，否则将会抛出一个 `InvalidAccessError` 类型的错误。
 
-##### XMLHttpRequest.upload
+##### upload
 
-`XMLHttpRequest` 不仅可以发送请求，还可以发送文件。`upload` 属性返回一个对象用于表示上传的进度，可以通过对其绑定事件来追踪上传的进度。可用事件如下：
+`XMLHttpRequest` 不仅能发送请求，也能发送文件。`upload` 属性返回一个对象用于表示上传的进度，可以通过对其绑定事件来追踪上传的进度。可用事件如下：
 
 - `loadstart`：上传开始。
 - `progress`：上传期间定期触发。
@@ -208,9 +208,9 @@ function upload(file) {
 </script>
 ```
 
-##### XMLHttpRequest.withCredentials
+##### withCredentials
 
-`withCredentials` 属性是一个布尔值，表示跨域请求时，用户凭证（比如 Cookie 和 HTTP 授权）是否会包含在请求中，默认是 `false`。
+`withCredentials` 属性是一个布尔值，用于表示跨域请求时，用户凭证（比如 Cookie 和 HTTP 授权）是否会包含在请求中，默认是 `false`。
 
 如果要想在跨域请求时携带 Cookie，则需要将 `widthCredentials` 设置为 `true`。
 
@@ -221,12 +221,216 @@ request.withCredentials = true;
 request.send();
 ```
 
-对于跨域请求，服务端也需要进行设置：
+并且对于跨域请求，服务端也需要进行设置：
 
-- 设置 `Access-Control-Allow-Origin` 为请求的源，告诉浏览器允许跨域。
-- 设置 `Access-Control-Allow-Credentials` 为 `true`，这样才能将响应暴露给页面。
+- `Access-Control-Allow-Origin` 必须设置为请求的源，告诉浏览器允许跨域。
+- `Access-Control-Allow-Credentials` 设置为 `true`，这样才能将响应暴露给页面。
 
 ### 方法
 
+##### open()
+
+`open()` 方法用于初始化一个请求，它仅仅是用于配置请求，并不会发送请求，语法如下：
+
+```
+request.open(method, url[, async[, user[, password]]]);
+```
+
+参数分别是：
+
+- `method`(必填)：HTTP 请求方法。比如 `GET`、`POST`、`PUT`、`DELETE`、`HEAD` 等。
+- `url`(必填)：要请求的 URL。
+- `async`(可选)：布尔值，表示请求是否为异步请求，默认为 `true`。如果为 `fasle`，那么请求将会以同步的方式处理，`send()` 方法只有在收到服务器响应后才会返回，浏览器才能进行下一步的操作。由于同步请求，用户发送请求后需要等待结果，很容易破坏用户体验，目前许多浏览器已经禁止在主线程中使用，只允许在 Worker 里面使用。因此，应该避免将该属性设置为 `false`。
+- `user`(可选)：用于身份验证的用户名，默认为 `null`。
+- `password`(可选)：用于身份验证的密码，默认为 `null`。
+
+比如，初始化一个 `POST` 请求：
+
+```javascript
+request.open('POST', '/api/test');
+```
+
+另外，对于调用过 `open()` 方法的请求，如果再次调用该方法，相当于调用 `abort()` 方法，即终止该请求。
+
+##### send()
+
+`send()` 方法用于发送 HTTP 请求。如果是异步请求，则该方法会在发送请求后立即返回；如果是同步请求，则该方法会在响应到达后才返回。语法如下：
+
+```
+request.send([body]);
+```
+
+该参数是可选的，表示请求中要发送的数据体，可以是各种格式的数据：
+
+```
+// null 默认值，比如请求方法是 GET 或 HEAD
+request.send(null);
+
+// 可以发送文档对象，在发送之前会被序列化
+request.send(Document data);
+
+// 可以发送表单数据
+reqeuset.send(FormData data);
+
+// 可以发送二进制数据，最好使用 ArrayBufferView 或 Blob 对象
+request.send(ArrayBufferView data);
+request.send(Blob data);
+
+// 可以发送字符串数据
+request.send(DOMString data);
+```
+
+示例一，发送带查询参数的 `GET` 请求：
+
+```javascript
+const request = new XMLHttpRequest();
+request.open('GET', `/api/userList/?usernmae=${encodeURIComponent(usernmae)}`);
+request.onload = () => {
+  // 处理响应
+};
+request.send();
+```
+
+示例二，发送带表单数据的 `POST` 请求：
+
+```javascript
+const formData = new FomrData();
+formData.append('username', 'lufei');
+formData.append('age', 18);
+
+const request = new XMLHttpRequest();
+request.open('POST', '/api/addUser');
+request.onload = () => {
+  // 处理响应
+};
+request.send(formData);
+```
+
+另外，如果没有调用 `setRequestHeader()` 方法来设置 `Accept` 头部信息，则会发送类型为 `*/*` 的 `Accept` 头部信息。
+
+##### setRequestHeader()
+
+`setRequestHeader()` 方法用于设置 HTTP 请求头信息，该方法必须在 `open()` 方法之后，`send()` 方法之前调用。语法如下：
+
+```
+request.setRequestHeader(header, value);
+```
+
+`header` 是请求头名称，`value` 是对应的值：
+
+```javascript
+request.open('get', '/api/test');
+request.setRequestHeader('Content-Type', 'text/html;charset=utf-8');
+request.setRequestHeader('Content-Length', 100);
+request.send();
+```
+
+如果多次对同一个请求头赋值，不会产生覆盖，只会生成一个合并了多个值的请求头。
+
+```javascript
+request.setRequestHeader('X-Auth'， '123');
+request.setRequestHeader('X-Auth'， '456');
+// header 将是
+// X-Auth: 123, 456
+```
+
+##### getResponseHeader()
+
+`getResponseHeader()` 方法返回一个字符串，表示获取的指定响应头的值，该方法不区分大小写。如果还没有收到服务器响应或者指定的字段不存在，则返回 `null`。语法如下：
+
+```
+request.getResponseHeader(headerName);
+```
+
+比如：
+
+```javascript
+request.getResponseHeader('Content-Type');
+```
+
+另外，如果响应头中有多个同名的字段，那么会返回以逗号和空格将值分隔的字符串。
+
+##### getAllResponseHeaders()
+
+`getAllResponseHeaders()` 方法一个字符串，表示服务器返回的所有响应头信息，每个 header 之间始终使用 `\r\n`（回车+换行）进行分隔。如果没有收到任何响应，则为 `null`。语法如下：
+
+```
+request.getAllResponseHeaders();
+```
+
+比如，以下是一个原始的响应头：
+
+```
+date: Fri, 08 Dec 2017 21:04:30 GMT\r\n
+content-encoding: gzip\r\n
+x-content-type-options: nosniff\r\n
+server: meinheld/0.6.1\r\n
+x-frame-options: DENY\r\n
+content-type: text/html; charset=utf-8\r\n
+connection: keep-alive\r\n
+strict-transport-security: max-age=63072000\r\n
+vary: Cookie, Accept-Encoding\r\n
+content-length: 6502\r\n
+x-xss-protection: 1; mode=block\r\n
+```
+
+对获取到的响应头字符串进行处理：
+
+```javascript
+request.onload = () => {
+  const headerList = reqeust.getAllResponseHeaders().trim().split(/[\r\n]+/);
+  const headerMap = headerList.reduce((result, current) => {
+    const [name, value] = current.split('');
+    result[name] = value;
+    return result;
+  });
+  console.log(headerMap['Content-Type']); // text/html; charset=utf-8
+}
+```
+
+##### overrideMimeType()
+
+`overrideMimeType()` 方法指定一个 MIME 类型用于替代服务器指定的类型，从而让浏览器进行不一样的处理。该方法需要在 `send()` 方法之前调用，语法如下：
+
+```
+request.overrideMimeType(mimeType);
+```
+
+比如，服务器返回的 MIME 类型是 `text/xml`，但由于一些原因浏览器解析失败报错，导致无法拿到数据。此时可以调用 `overrideMimeType()` 方法将 MIME 类型修改为 `text/plain`，这样就可以得到原始数据：
+
+```javascript
+request.open('get', '/api/test');
+request.overrideMimeType('text/plain');
+request.send();
+```
+
+##### abort()
+
+`abort()` 方法用于终止已经发出的请求。当请求被终止时会触发 `abort` 事件，同时 `readyState` 变为 0，并且 `status` 也变为 0。
+
 ### 事件
+
+##### readyStateChange
+
+##### loadstart
+
+
+
+##### load
+
+##### error
+
+##### loadend
+
+##### progress
+
+##### abort
+
+
+
+##### timeout
+
+
+
+### 应用
 
