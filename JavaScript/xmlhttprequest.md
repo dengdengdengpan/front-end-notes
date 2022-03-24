@@ -19,10 +19,10 @@ const request = new XMLHttpRequest();
 - 0 - UNSET：已创建 `XMLHttpRequest` 实例，但还未调用 `open()` 方法。
 - 1 - OPENED：`open()` 方法已经调用，但还未调用 `send()` 方法。在这个状态下，可以通过 `setRequestHeader()` 方法设置请求头信息。
 - 2 - HEADERS_RECEIVED：`send()` 方法已经被调用，并且已经接收到响应头信息。
-- 3 - LOADING：正在接收服务器响应的 body 部分。此时，如果 `responseType` 属性是 `text` 或空字符串，那么 `responseText` 属性会包含已经收到的部分信息。
+- 3 - LOADING：正在接收服务器响应中的 body 部分。此时，如果 `responseType` 属性是 `text` 或空字符串，那么 `responseText` 属性会包含已经收到的部分信息。
 - 4 - DONE：本次请求已经完成，这意味着服务器返回的数据已经完全接收或者完成失败。
 
-每当实例的状态发生变化，`readyState` 属性的值都会改变，并会触发 `readyStateChange` 事件：
+每当实例的状态发生变化，`readyState` 属性的值都会改变，并会触发 `readyStateChange` 事件。
 
 ```javascript
 const request = new XMLHttpRequest();
@@ -151,7 +151,7 @@ request.send();
 request.onload = () => {
   const { readyState, status, response } = request;
   const checkReadyState = readyState;
-  const checkStatus = (status >= 200 && status <300) || status === 304;
+  const checkStatus = (status >= 200 && status < 300) || status === 304;
   if (checkReadyState && checkStatus) {
     console.log(response);
   }
@@ -378,9 +378,9 @@ x-xss-protection: 1; mode=block\r\n
 
 ```javascript
 request.onload = () => {
-  const headerList = reqeust.getAllResponseHeaders().trim().split(/[\r\n]+/);
+  const headerList = reqeust.getAllResponseHeaders().trim().split('\r\n');
   const headerMap = headerList.reduce((result, current) => {
-    const [name, value] = current.split('');
+    const [name, value] = current.split(': ');
     result[name] = value;
     return result;
   });
@@ -406,31 +406,186 @@ request.send();
 
 ##### abort()
 
-`abort()` 方法用于终止已经发出的请求。当请求被终止时会触发 `abort` 事件，同时 `readyState` 变为 0，并且 `status` 也变为 0。
+`abort()` 方法用于中止已经发出的请求，所以该方法需要在 `send()` 方法后调用。当请求被中止时会触发 `abort` 事件，同时 `readyState` 变为 4，`status` 变为 0。
 
 ### 事件
 
-##### readyStateChange
+##### readystatechange
+
+`readystatechange` 事件会在 `readyState` 属性发生变化时触发，语法如下：
+
+```javascript
+request.addEventListener('readystatechange', event => {});
+// or
+request.onreadystatechange = event => {};
+```
+
+比如：
+
+```javascript
+const request = new XMLHttpRequest();
+reqeust.addEventListener('readystatechange', event => {
+  const { readyState } = request;
+  console.log(readyState); // 分别打印出 1、2、3、4
+});
+request.open('GET', '/api/test');
+request.send();
+```
 
 ##### loadstart
 
+`loadstart` 事件会在请求开始时触发——即调用 `open()` 方法后，语法如下：
 
+```javascript
+request.addEventListener('loadstart', event => {});
+// or
+request.onloadstart = event => {};
+```
+
+另外，`loadstart` 事件（也包括 `load`、`loadend`、`error`、`progress`、`abort`、`timeout`）中的 `event` 对象还有三个自有的可读属性：
+
+- `lengthComputable` 是布尔值，表示加载的总量是否可以计算，默认是 false。
+- `loaded` 是一个整数，表示已经加载的量，默认是 0。当使用 HTTP 下载资源时，该属性只计算响应的 body 部分，而不会包含响应头和其它开销。
+- `total` 是一个整数，表示需要加载的总量，默认是 0。当使用 HTTP 下载资源时，该属性的值等同于`Content-Length`，而不会包含响应头和其它开销。
+
+示例：
+
+```javascript
+const request = new XMLHttpRequest();
+request.open('GET', '/api/test');
+reqeust.addEventListener('loadstart', event => {
+  const { readyState } = request;
+  console.log(readyState); // 1
+  const { lengthComputable, loaded, total } = event;
+  console.log(lengthComputable, loaded, total);
+});
+request.send();
+```
 
 ##### load
 
-##### error
+`load` 事件在请求成功完成时被触发，此时服务器返回的数据也接收完成，语法如下：
+
+```javascript
+request.addEventListener('load', event => {});
+// or
+request.onload = event => {};
+```
+
+示例：
+
+```javascript
+const request = new XMLHttpRequest();
+request.open('GET', '/api/test');
+request.addEventListener('load', event => {
+  const { readyState, status, response } = request;
+  console.log(readyState); // 4
+  if ((status >= 200 && status < 300) || status === 304) {
+    // 处理响应
+    console.log(response);
+  } else {
+    // HTTP error
+    console.log('请求出错了');
+  }
+});
+request.send();
+```
 
 ##### loadend
 
+`loadend` 事件会在请求完成时触发，不管是成功还是失败。这表示在 `load`、`error`、`abort`、`timeout` 事件后都会触发 `loadend` 事件。语法如下：
+
+```javascript
+request.addEventListener('loadend', event => {});
+// or
+request.onloadend = event => {};
+```
+
+示例：
+
+```javascript
+const request = new XMLHttpRequest();
+request.open('GET', '/api/test');
+request.addEventListener('loadend', event => {
+  const { readyState } = request;
+  console.log(readyState); // 4
+  console.log('请求完成，不管是成功还是失败')
+});
+request.send();
+```
+
+##### error
+
+`error` 事件会在遇到非 HTTP 错误时触发，比如网络中断或跨域。语法如下：
+
+```javascript
+request.addEventListener('error', event => {});
+// or
+request.onerror = event => {};
+```
+
+示例：
+
+```javascript
+const request = new XMLHttpRequest();
+request.open('GET', '/api/test');
+request.addEventListener('error', event => {
+  // 处理非 HTTP error
+});
+request.send();
+```
+
 ##### progress
+
+`progress` 事件
 
 ##### abort
 
+`abort` 事件会在调用了 `abort()` 方法中止请求后触发，语法如下：
 
+```javascript
+request.addEventListener('abort', event => {});
+// or
+request.onabort = event => {};
+```
+
+示例：
+
+```javascript
+const request = new XMLHttpRequest();
+request.open('GET', '/api/test');
+request.addEventListener('abort', event => {
+  const { readyState, status } = request;
+  console.log(readyState); // 4
+  console.log(status); // 0
+});
+request.send();
+request.abort();
+```
 
 ##### timeout
 
+`timeout` 事件会在设置了 `timeout` 属性后由于请求超时而取消了该请求后触发，语法如下：
+
+```javascript
+request.addEventListener('timeout', event => {});
+// or
+request.ontimeout = event => {};
+```
+
+示例：
+
+```javascript
+const request = new XMLHttpRequest();
+request.open('GET', '/api/test');
+request.timeout = 100;
+request.addEventListener('timeout', event => {
+  // 请求超时
+  const { readyState } = request;
+  console.log(readyState); // 4
+});
+request.send();
+```
 
 
-### 应用
 
