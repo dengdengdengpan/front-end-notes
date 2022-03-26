@@ -1,4 +1,4 @@
-# 前端学习笔记
+# Front End Notes
 
 ### HTML
 
@@ -11,6 +11,11 @@
 - [数据类型](./JavaScript/data-type.md)
   - [Undefined 和 Null](./JavaScript/undefined-null.md)
   - [Boolean](./JavaScript/boolean.md)
+- 网络请求
+  - [AJAX](./JavaScript/ajax.md)
+  - [XMLHttpRequest](./JavaScript/xmlhttprequest.md)
+    - [请求静态资源](./JavaScript/xmlhttprequest-example-static.md)
+  - [Fetch](./JavaScript/fetch.md)
 
 ### Vue
 
