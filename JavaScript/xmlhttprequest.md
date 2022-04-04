@@ -177,7 +177,7 @@ request.send();
 
 ##### upload
 
-`XMLHttpRequest` 不仅能发送请求，也能发送文件。`upload` 属性返回一个对象用于表示上传的进度，可以通过对其绑定事件来追踪上传的进度。可用事件如下：
+`XMLHttpRequest` 还可以用于上传文件，而且如果上传的文件过大，一般都会追踪上传的进度。但 `progress` 事件在这里不起作用，因为它仅在接收数据阶段触发。此时可以使用 `upload` 属性，它返回一个对象用于表示上传的进度，可以通过对其绑定事件来追踪上传的进度。可用事件如下：
 
 - `loadstart`：上传开始。
 - `progress`：上传期间定期触发。
@@ -420,7 +420,7 @@ request.addEventListener('readystatechange', event => {});
 request.onreadystatechange = event => {};
 ```
 
-比如：
+示例：
 
 ```javascript
 const request = new XMLHttpRequest();
@@ -464,7 +464,7 @@ request.send();
 
 ##### load
 
-`load` 事件在请求成功完成时被触发，此时服务器返回的数据也接收完成，语法如下：
+`load` 事件会在请求成功完成时触发，此时已完全下载响应。比如，HTTP 状态码为 2xx 是请求成功完成，HTTP 状态码为 400 或 500 等也是请求成功完成。语法如下：
 
 ```javascript
 request.addEventListener('load', event => {});
@@ -493,7 +493,7 @@ request.send();
 
 ##### loadend
 
-`loadend` 事件会在请求完成时触发，不管是成功还是失败。这表示在 `load`、`error`、`abort`、`timeout` 事件后都会触发 `loadend` 事件。语法如下：
+`loadend` 事件会在 `load`、`error`、`abort` 或 `timeout` 之后触发，该事件表示请求结束，无论成功与否。语法如下：
 
 ```javascript
 request.addEventListener('loadend', event => {});
@@ -537,7 +537,25 @@ request.send();
 
 ##### progress
 
-`progress` 事件
+`progress` 事件会在接收响应数据阶段定期触发，语法如下：
+
+```javascript
+request.addEventListener('progress', event => {});
+// or
+request.onprogress = event => {};
+```
+
+示例：
+
+```javascript
+const request = new XMLHttpRequest();
+request.open('GET', '/api/test');
+request.addEventListener('progress', event => {
+  const { readyState } = request;
+  console.log(readyState); // 3
+});
+request.send();
+```
 
 ##### abort
 
@@ -586,6 +604,17 @@ request.addEventListener('timeout', event => {
 });
 request.send();
 ```
+
+### 应用
+
+使用 `XMLHttpRequest` 发送 AJAX 请求，一般有以下四个步骤：
+
+1. 创建 XMLHttpRequest对象的实例。
+2. 调用实例的 `open` 方法。
+3. 监听实例的 `onload`、`onerror` 事件，并处理返回的数据。
+4. 调用实例的 `send` 方法。
+
+##### [请求静态资源](./JavaScript/xmlhttprequest-example-static.md)
 
 
 
