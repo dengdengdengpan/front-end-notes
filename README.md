@@ -10,7 +10,9 @@
 
 ##### [基本语法](./JavaScript/grammar.md)
 
-##### [变量](./JavaScript/variable.md)
+##### 变量
+
+- [认识变量](./JavaScript/variable.md)
 
 ##### [数据类型](./JavaScript/data-type.md)
 
