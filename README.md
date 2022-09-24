@@ -18,6 +18,7 @@
 
 - [Undefined 和 Null](./JavaScript/undefined-null.md)
 - [Boolean](./JavaScript/boolean.md)
+- [String](./JavaScript/string.md)
 
 ### 网络请求
 
