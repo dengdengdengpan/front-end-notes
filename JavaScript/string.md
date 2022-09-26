@@ -4,7 +4,7 @@
 
 `String` 类型是字符串——由 0 个或多个 16 位的 Unicode 字符序列组成。
 
-### 使用
+### 使用字符串
 
 在 JavaScript 中，字符串必须被括在引号里，目前有三种包含字符串的方式：
 
@@ -166,3 +166,101 @@ const backquote = `JavaScript`;
 // 错误示例
 const name = 'lufei"; // Uncaught SyntaxError: Invalid or unexpected token
 ```
+
+### 转义字符
+
+反斜杠（`\`）在字符串中有特殊的含义，可以用来表示一些具有特殊功能的字符。
+
+| 字符           | 描述                                                  |
+| :------------- | :---------------------------------------------------- |
+| \0             | 空白符（`\u0000`）                                    |
+| \\'            | 单引号（`\u0027`）                                    |
+| \\"            | 双引号（`\u0022`）                                    |
+| \\`            | 反引号（`\u0060`）                                    |
+| \\\            | 反斜杠（`\u005C`）                                    |
+| \n             | 换行符（`\u000A`）                                    |
+| \r             | 回车键（`\u000D`）                                    |
+| \v             | 垂直制表符（`\u000B`）                                |
+| \t             | 制表符（`\u0009`）                                    |
+| \b             | 退格键（`\u0008`）                                    |
+| \f             | 换页符（`\u000C`）                                    |
+| \uXXXX         | `\u` 后面紧跟 4 个十六进制数，范围为 0000 到 FFFF     |
+| \u{X...XXXXXX} | `\u` 后面紧跟 1 到 6 个十六进制数，范围为 0 到 10FFFF |
+| \xXX           | `\x` 后面紧跟 2 个十六进制数，范围 00 到 FF           |
+
+示例：
+
+```javascript
+console.log('a\'c'); // a'c
+console.log('a\"c'); // a"c
+console.log(`a\`d`); // a`d
+console.log('\\'); // \
+console.log('line1\nline2');
+// line1
+// line2
+console.log('\u00A9'); // ©
+console.log('\u007A'); // z
+console.log('\u{1F60D}'); // 😍
+console.log('\xA9'); // ©
+```
+
+### length 属性
+
+`length` 属性是一个只读属性，用于表示字符串的长度。
+
+```javascript
+'abc'.length; // 3
+'ab c'.length; // 4
+'落霞与孤鹜齐飞'.length; // 7
+'line1\nline2'.length; // 11，\n 是一个特殊字符
+```
+
+有些字符串使用 `length` 属性得到的长度不等于字符数，例如：
+
+```javascript
+'😄'.length; // 2
+'𝌆'.length; // 2
+```
+
+这是因为 `length` 属性实际上**返回的是字符串中代码单元的个数**。其中，代码单元（Code Unit）是指字符编码系统编码时使用的最小尺寸的比特。由于在 1995 年 JS 被创建时还没有 UTF-16，所以 JS 使用的是 UCS-2 编码方式——使用两个字节来存储每个字符，这意味着 JS 将每 16 比特作为一个代码单元。因此对于 4 个字节的字符，JS 会将其当作两个双字节的字符处理——即两个代码单元，所以 `length` 属性返回的值是 2。
+
+在 ES6 中，可以使用以下方式得到字符串的正确长度：
+
+```javascript
+Array.from('😄').length; // 1
+Array.from('𝌆').length; // 1
+```
+
+### 访问字符
+
+在 JS 中，访问字符串中的单个字符有两种方式：
+
+1. 使用 `str[index]` 返回位于 `index` 位置的字符（`index` 从 0 开始）。
+2. 使用 `str.charAt(index)` 方法。
+
+示例：
+
+```javascript
+const a = 'JavaScript';
+a[0]; // J
+a[5]; // c
+a[20]; // undefined
+
+a.charAt(0); // J
+a.charAt(4); // S
+a.charAt(20); // ''
+```
+
+### 不可变特点
+
+**JS 中的字符串是不可变的**，这表示字符串一旦创建，其值就不能变了。要想修改某个变量中的字符串值，必须先销毁原始的字符串，然后将包含新值的另一个字符串保存到该变量。
+
+```javascript
+let str = 'abc';
+str = str + 'de';
+```
+
+过程如下：
+
+1. 变量 `str` 重新赋值后会被分配一个可以容纳 5 个字符的空间，并填充上 `abc` 和 `de`。
+2. 销毁原始的字符串 `abc` 和字符串 `de`。
