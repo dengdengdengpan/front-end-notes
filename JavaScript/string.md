@@ -1,5 +1,7 @@
 # String
 
+![string](./imgs/string.png)
+
 ### 定义
 
 `String` 类型是字符串——由 0 个或多个 16 位的 [Unicode](./unicode.md) 字符序列组成。
