@@ -2,16 +2,16 @@
 
 ### Undefined 类型
 
-`Undefined` 类型只有一个值 `undefined`，表示**未定义**的值。以下是产生 `undefined` 的场景：
+`Undefined` 类型只有一个值 `undefined`，表示**未定义**的值。例如：
 
-- 声明变量但未初始化。
+- 声明了变量但未初始化。
 
   ```javascript
   let name;
   console.log(name); // undefined
   ```
 
-  还可以显式地将 `undefined` 赋值给变量：
+  还可以显式地将 `undefined` 赋值给变量。
 
   ```javascript
   let a = undefined;
@@ -19,6 +19,13 @@
   ```
 
   但这是不必要且不合理的，因为默认情况下任何未经初始化的变量的值都是 `undefined`。一般来说，永远不要显式地给变量赋值 `undefined`。
+
+- 对未声明的的变量使用 `typeof` 运算符也会得到 `undefined`。
+
+  ```javascript
+  // 变量 foo 未声明
+  typeof foo; // undefined
+  ```
 
 - 对象没有被赋值的属性。
 
@@ -41,13 +48,6 @@
     console.log(a); // undefined
   }
   fn();
-  ```
-
-- 对未定义的变量使用 `typeof` 运算符也会得到 `undefined`。
-
-  ```javascript
-  // 变量 foo 未定义
-  typeof foo; // undefined
   ```
 
 另外，`undefined` 还是全局对象的一个属性。
@@ -91,13 +91,13 @@ let error = null;
 1. 定义不同
 
    - `undefined` 表示一个未定义的值——即该值根本不存在。
-   - `null` 表示一个值为空的值——即该值被定义了，但值为空。
+   - `null` 表示一个值为空，即该值被定义了，但值为空。
 
    可以这样理解：
 
    ![undefined-null](./imgs/undefined-null.png)
 
-2. 数值转换时不同
+2. 数值转换的结果不同
 
    - `undefined` 转为数值时为 `NaN`。
    - `null` 转为数值时为 `0`。
@@ -107,7 +107,7 @@ let error = null;
    - `undefined` 是全局对象的一个属性。
    - `null` 是一个字面量，并不是全局对象的属性。
 
-4. `typeof` 运算符检验的结果不同
+4. `typeof` 运算符返回的结果不同
 
    - `typeof undefiend === 'undefined'`
    - `typeof null === 'object'`
