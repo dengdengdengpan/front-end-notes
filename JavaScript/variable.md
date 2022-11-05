@@ -235,7 +235,7 @@ fn();
 let name;
 ```
 
-当未初始化时，变量 `name` 的值为 `undefined`；当初始化时：
+未初始化时，变量 `name` 的值为 `undefined`。也可以在声明变量时就进行初始化：
 
 ```js
 let age = 18;
