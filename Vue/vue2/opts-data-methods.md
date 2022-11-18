@@ -287,3 +287,24 @@ function initData(vm: Component) {
 
 ### methods
 
+##### 是什么？
+
+`methods` 是一个包含了 Vue 实例所有方法的对象，其作用是用于声明要混入到组件实例中的方法。这些方法可以是事件处理函数、请求数据的函数或其它的功能性函数。
+
+##### 怎么使用？
+
+`methods` 的类型为 `{ [key: string]: Function }`。例如，声明一个 `plusOne` 方法：
+
+```javascript
+const	vm = new Vue({
+  template: '<button @click="plusOne">click</button>',
+  data: { n: 1 },
+  methods: {
+    plusOne () {
+      this.n++
+    }
+  }
+})
+```
+
+这样
